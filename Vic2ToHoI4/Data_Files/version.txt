@@ -1,5 +1,0 @@
-# Version info
-
-version = "0.2O"
-name = "Oppenheimer"
-descriptionLine = "compatible with 1.10.7"

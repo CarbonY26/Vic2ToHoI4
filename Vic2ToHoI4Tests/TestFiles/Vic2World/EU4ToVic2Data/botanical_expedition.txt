@@ -1,4 +1,0 @@
-TAG = {
-	monarchy = yes
-	last_dynasty = test_dynasty
-}

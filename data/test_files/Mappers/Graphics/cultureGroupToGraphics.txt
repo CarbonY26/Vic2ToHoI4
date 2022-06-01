@@ -1,0 +1,91 @@
+test_culture_group = {
+	army_portraits = {
+		"path/test_army_portrait.dds"
+		"path/test_army_portrait2.dds"
+	}
+	navy_portraits = {
+		"path/test_navy_portrait.dds"
+		"path/test_navy_portrait2.dds"
+	}
+	leader_portraits = {
+		good_ideology = { "gfx/leaders/test_leader_portrait.dds" "gfx/leaders/test_leader_portrait2.dds" }
+	}
+	female_portraits = {
+		good_ideology = { "gfx/leaders/test_leader_portraitF.dds" "gfx/leaders/test_leader_portraitF2.dds" }
+	}
+	ideology_minister_portraits = {
+		good_ideology = { "gfx/interface/ideas/test_minister_portrait.dds" "gfx/interface/ideas/test_minister_portrait2.dds" }
+	}
+	male_monarch_portraits = {
+		"path/test_male_monarch_portrait.dds"
+		"path/test_male_monarch_portrait2.dds"
+	}
+	female_monarch_portraits = {
+		"path/test_female_monarch_portrait.dds"
+		"path/test_female_monarch_portrait2.dds"
+	}
+	male_operative_portraits = {
+		"path/test_male_operative_portrait.dds"
+		"path/test_male_operative_portrait2.dds"
+	}
+	female_operative_portraits = {
+		"path/test_female_operative_portrait.dds"
+		"path/test_female_operative_portrait2.dds"
+	}
+	graphical_culture = test_graphical_culture
+	graphical_culture_2d = test_graphical_culture_2d
+}
+
+
+test_culture_groups = {
+	cultures_and_groups = { test_culture test_culture_group2 test_culture_group3 }
+	army_portraits = {
+		"path/test_army_portrait3.dds"
+		"path/test_army_portrait4.dds"
+	}
+	navy_portraits = {
+		"path/test_navy_portrait3.dds"
+		"path/test_navy_portrait4.dds"
+	}
+	leader_portraits = {
+		good_ideology = { "gfx/leaders/test_leader_portrait3.dds" }
+	}
+	female_portraits = {
+		good_ideology = { "gfx/leaders/test_leader_portraitF3.dds" }
+	}
+	ideology_minister_portraits = {
+		good_ideology = { "gfx/interface/ideas/test_minister_portrait3.dds" }
+	}
+	male_monarch_portraits = {
+		"path/test_male_monarch_portrait3.dds"
+		"path/test_male_monarch_portrait4.dds"
+	}
+	female_monarch_portraits = {
+		"path/test_female_monarch_portrait3.dds"
+		"path/test_female_monarch_portrait4.dds"
+	}
+	male_operative_portraits = {
+		"path/test_male_operative_portrait3.dds"
+		"path/test_male_operative_portrait4.dds"
+	}
+	female_operative_portraits = {
+		"path/test_female_operative_portrait3.dds"
+		"path/test_female_operative_portrait4.dds"
+	}
+	graphical_culture = test_graphical_culture2
+	graphical_culture_2d = test_graphical_culture2_2d
+}
+
+
+test_culture = {
+	cultures_and_groups = { test_culture2 }
+	female_portraits = {
+		good_ideology = { "gfx/leaders/test_leader_portraitF4.dds" }
+	}
+	leader_portraits = {
+		good_ideology = { "gfx/leaders/test_leader_portrait4.dds" }
+	}
+	ideology_minister_portraits = {
+		good_ideology = { "gfx/interface/ideas/test_minister_portrait4.dds" }
+	}
+}

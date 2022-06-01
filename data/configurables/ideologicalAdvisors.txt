@@ -1,0 +1,29 @@
+radical = {
+	traits = { radical_minister }
+	picture = GFX_idea_generic_goods_red_bonus
+}
+
+neutrality = {
+	traits = { neutrality_minister }
+	picture = GFX_idea_generic_democratic_reformer
+}
+
+absolutist = {
+	traits = { absolutist_minister }
+	picture = GFX_idea_triumphant_will
+}
+
+communism = {
+	traits = { communism_minister }
+	picture = GFX_idea_generic_communist_revolutionary
+}
+
+democratic = {
+	traits = { democratic_minister }
+	picture = GFX_idea_generic_democratic_reformer
+}
+
+fascism = {
+	traits = { fascism_minister }
+	picture = GFX_idea_generic_fascist_demagogue
+}
