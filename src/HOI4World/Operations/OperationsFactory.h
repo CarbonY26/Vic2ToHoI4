@@ -3,8 +3,8 @@
 
 
 
-#include "Operations.h"
-#include "Parser.h"
+#include "external/common_items/ConvenientParser.h"
+#include "src/HOI4World/Operations/Operations.h"
 #include <memory>
 #include <string>
 
@@ -16,7 +16,7 @@ namespace HoI4
 class Operations::Factory: commonItems::parser
 {
   public:
-	std::unique_ptr<Operations> getOperations(const std::string& HoI4Path);
+	std::unique_ptr<Operations> getOperations();
 };
 
 } // namespace HoI4

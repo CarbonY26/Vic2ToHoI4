@@ -1,17 +1,17 @@
-#include "Configuration.h"
-#include "HOI4World/Map/CoastalProvinces.h"
-#include "HOI4World/Map/CoastalProvincesBuilder.h"
-#include "HOI4World/States/HoI4State.h"
-#include "HOI4World/States/StateCategoriesBuilder.h"
-#include "Mappers/Country/CountryMapperBuilder.h"
-#include "Mappers/Provinces/ProvinceMapperBuilder.h"
-#include "OutHoi4/States/OutHoI4State.h"
-#include "V2World/Pops/Pop.h"
-#include "V2World/Provinces/Province.h"
-#include "V2World/Provinces/ProvinceBuilder.h"
-#include "V2World/States/StateBuilder.h"
-#include "gmock/gmock-matchers.h"
-#include "gtest/gtest.h"
+#include "external/googletest/googlemock/include/gmock/gmock-matchers.h"
+#include "external/googletest/googletest/include/gtest/gtest.h"
+#include "src/Configuration.h"
+#include "src/HOI4World/Map/CoastalProvinces.h"
+#include "src/HOI4World/Map/CoastalProvincesBuilder.h"
+#include "src/HOI4World/States/HoI4State.h"
+#include "src/HOI4World/States/StateCategoriesBuilder.h"
+#include "src/Mappers/Country/CountryMapperBuilder.h"
+#include "src/Mappers/Provinces/ProvinceMapperBuilder.h"
+#include "src/OutHoi4/States/OutHoI4State.h"
+#include "src/V2World/Pops/Pop.h"
+#include "src/V2World/Provinces/Province.h"
+#include "src/V2World/Provinces/ProvinceBuilder.h"
+#include "src/V2World/States/StateBuilder.h"
 #include <optional>
 #include <sstream>
 
@@ -310,7 +310,7 @@ TEST(HoI4World_States_StateTests, categoryCanBeChanged)
 }
 
 
-TEST(HoI4World_States_StateTests, InfrastructureAddedPerTwoRailLevels)
+TEST(HoI4World_States_StateTests, InfrastructureAddedPerThreeRailLevels)
 {
 	const auto sourceState =
 		 *Vic2::State::Builder().setProvinces({Vic2::Province::Builder().setNumber(0).setRailLevel(6).build()}).build();
@@ -322,7 +322,7 @@ TEST(HoI4World_States_StateTests, InfrastructureAddedPerTwoRailLevels)
 		 *HoI4::StateCategories::Builder().addCategory(2, "mockedCategory").Build(),
 		 *HoI4::CoastalProvinces::Builder().Build());
 
-	EXPECT_FLOAT_EQ(4.0F, theState.getInfrastructure());
+	EXPECT_FLOAT_EQ(3.0F, theState.getInfrastructure());
 }
 
 
@@ -341,7 +341,7 @@ TEST(HoI4World_States_StateTests, InfrastructureForAnyFactories)
 		 *HoI4::StateCategories::Builder().addCategory(7, "mockedCategory").Build(),
 		 *HoI4::CoastalProvinces::Builder().Build());
 
-	EXPECT_FLOAT_EQ(1.75F, theState.getInfrastructure());
+	EXPECT_FLOAT_EQ(1.5F, theState.getInfrastructure());
 }
 
 
@@ -363,7 +363,7 @@ TEST(HoI4World_States_StateTests, InfrastructureForSixFactories)
 		 *HoI4::StateCategories::Builder().addCategory(9, "mockedCategory").Build(),
 		 *HoI4::CoastalProvinces::Builder().Build());
 
-	EXPECT_FLOAT_EQ(2.5F, theState.getInfrastructure());
+	EXPECT_FLOAT_EQ(2.0F, theState.getInfrastructure());
 }
 
 
@@ -382,7 +382,7 @@ TEST(HoI4World_States_StateTests, InfrastructureForTenFactories)
 		 *HoI4::StateCategories::Builder().addCategory(13, "mockedCategory").Build(),
 		 *HoI4::CoastalProvinces::Builder().Build());
 
-	EXPECT_FLOAT_EQ(3.25F, theState.getInfrastructure());
+	EXPECT_FLOAT_EQ(2.5F, theState.getInfrastructure());
 }
 
 

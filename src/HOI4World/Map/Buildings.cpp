@@ -1,11 +1,12 @@
-#include "Buildings.h"
-#include "CoastalProvinces.h"
-#include "Configuration.h"
-#include "HOI4World/States/HoI4State.h"
-#include "HOI4World/States/HoI4States.h"
-#include "Hoi4Building.h"
-#include "Log.h"
-#include "Maps/MapData.h"
+#include "src/HOI4World/Map/Buildings.h"
+#include "external/common_items/Log.h"
+#include "src/Configuration.h"
+#include "src/HOI4World/Map/CoastalProvinces.h"
+#include "src/HOI4World/Map/Hoi4Building.h"
+#include "src/HOI4World/States/HoI4State.h"
+#include "src/HOI4World/States/HoI4States.h"
+#include "src/Maps/MapData.h"
+#include <fstream>
 
 
 
@@ -84,6 +85,14 @@ void HoI4::Buildings::processLine(const std::string& line, Maps::MapData& theMap
 		{
 			importDefaultBuilding(matches, defaultNuclearReactors, theMapData);
 		}
+		else if (matches[2] == "supply_node")
+		{
+			importDefaultBuilding(matches, defaultSupplyNodes, theMapData);
+		}
+		else if (matches[2] == "floating_harbor")
+		{
+			importDefaultBuilding(matches, defaultFloatingHarbors, theMapData);
+		}
 	}
 }
 
@@ -100,7 +109,7 @@ void HoI4::Buildings::importDefaultBuilding(const std::smatch& matches,
 
 	auto connectingSeaProvince = stoi(matches[7].str());
 
-	if (auto province = theMapData.getProvinceNumber(
+	if (auto province = theMapData.GetProvinceNumber(
 			  {static_cast<int>(position.xCoordinate), static_cast<int>(position.zCoordinate)});
 		 province)
 	{
@@ -128,6 +137,8 @@ void HoI4::Buildings::placeBuildings(const States& theStates,
 	placeNavalBases(provinceToStateIDMap, actualCoastalProvinces, theMapData, theConfiguration);
 	placeNuclearReactors(theStates, theMapData);
 	placeSyntheticRefineries(theStates, theMapData);
+	placeSupplyNodes(provinceToStateIDMap, theMapData, theConfiguration);
+	placeFloatingHarbors(provinceToStateIDMap, actualCoastalProvinces, theMapData, theConfiguration);
 }
 
 
@@ -155,7 +166,7 @@ void HoI4::Buildings::placeArmsFactories(const States& theStates, const Maps::Ma
 		{
 			for (auto theProvince: state.second.getProvinces())
 			{
-				auto theProvincePoints = theMapData.getProvincePoints(theProvince);
+				auto theProvincePoints = theMapData.GetProvincePoints(theProvince);
 				if (theProvincePoints)
 				{
 					const auto centermostPoint = theProvincePoints->getCentermostPoint();
@@ -210,7 +221,7 @@ void HoI4::Buildings::placeIndustrialComplexes(const States& theStates, const Ma
 		{
 			for (auto theProvince: state.second.getProvinces())
 			{
-				auto theProvincePoints = theMapData.getProvincePoints(theProvince);
+				auto theProvincePoints = theMapData.GetProvincePoints(theProvince);
 				if (theProvincePoints)
 				{
 					const auto centermostPoint = theProvincePoints->getCentermostPoint();
@@ -264,7 +275,7 @@ void HoI4::Buildings::placeAirports(const States& theStates, const Maps::MapData
 			auto theProvince = *state.second.getProvinces().begin();
 			airportLocations.insert(std::make_pair(state.first, theProvince));
 
-			auto theProvincePoints = theMapData.getProvincePoints(theProvince);
+			auto theProvincePoints = theMapData.GetProvincePoints(theProvince);
 			if (theProvincePoints)
 			{
 				const auto centermostPoint = theProvincePoints->getCentermostPoint();
@@ -311,7 +322,7 @@ void HoI4::Buildings::placeAntiAir(const States& theStates, const Maps::MapData&
 		{
 			for (auto theProvince: state.second.getProvinces())
 			{
-				auto theProvincePoints = theMapData.getProvincePoints(theProvince);
+				auto theProvincePoints = theMapData.GetProvincePoints(theProvince);
 				if (theProvincePoints)
 				{
 					const auto centermostPoint = theProvincePoints->getCentermostPoint();
@@ -361,6 +372,76 @@ void HoI4::Buildings::placeNavalBases(const std::map<int, int>& provinceToStateI
 	}
 }
 
+void HoI4::Buildings::placeFloatingHarbors(const std::map<int, int>& provinceToStateIDMap,
+	 const std::map<int, std::vector<int>>& actualCoastalProvinces,
+	 const Maps::MapData& theMapData,
+	 const Configuration& theConfiguration)
+{
+	for (const auto& province: actualCoastalProvinces)
+	{
+		auto provinceToStateMapping = provinceToStateIDMap.find(province.first);
+		if (provinceToStateMapping == provinceToStateIDMap.end())
+		{
+			Log(LogLevel::Warning) << "Could not find state for province " << province.first
+										  << ". Floating Harbor not set.";
+			continue;
+		}
+
+		addFloatingHarbors(provinceToStateMapping->second, province, theMapData, theConfiguration);
+	}
+}
+
+void HoI4::Buildings::addFloatingHarbors(int stateID,
+	 const std::pair<int, std::vector<int>>& province,
+	 const Maps::MapData& theMapData,
+	 const Configuration& theConfiguration)
+{
+	BuildingPosition position;
+	auto positionUnset = true;
+	auto connectingSeaProvince = 0;
+	for (auto seaProvince: province.second)
+	{
+		// floating harbors are placed on the sea and "connect" to land tiles,
+		// so the adjacent sea province column is filled in with the province ID of the land the floating harbor supports
+		// they are also in the state of the connected land tile for buildings.txt purposes
+		auto defaultFloatingHarbor = defaultFloatingHarbors.find(std::make_pair(seaProvince, province.first));
+		if (defaultFloatingHarbor != defaultFloatingHarbors.end())
+		{
+			position = defaultFloatingHarbor->second;
+			connectingSeaProvince = province.first;
+			positionUnset = false;
+		}
+	}
+
+	if (positionUnset)
+	{
+		connectingSeaProvince = province.first;
+		auto possiblePosition = theMapData.GetSpecifiedBorderCenter(province.second[0], province.first);
+		if (!possiblePosition)
+		{
+			Log(LogLevel::Warning) << "Could not find position for province " << province.first
+										  << ". Floating Harbor not set.";
+			return;
+		}
+
+		position.xCoordinate = possiblePosition->first;
+		position.yCoordinate = 11.0;
+		position.zCoordinate = possiblePosition->second;
+		position.rotation = 0.0;
+
+		if (theConfiguration.getDebug())
+		{
+			Log(LogLevel::Warning) << "The Floating Harbor at province " << province.first
+										  << " at "
+											  "("
+										  << position.xCoordinate << ", " << position.zCoordinate
+										  << ") "
+											  "did not have a location in default HoI4.";
+		}
+	}
+
+	buildings.insert(std::make_pair(stateID, Building(stateID, "floating_harbor", position, connectingSeaProvince)));
+}
 
 void HoI4::Buildings::placeBunkers(const std::map<int, int>& provinceToStateIDMap,
 	 const Maps::MapData& theMapData,
@@ -395,7 +476,7 @@ void HoI4::Buildings::addNavalBase(int stateID,
 	if (positionUnset)
 	{
 		connectingSeaProvince = province.second[0];
-		auto possiblePosition = theMapData.getSpecifiedBorderCenter(province.first, province.second[0]);
+		auto possiblePosition = theMapData.GetSpecifiedBorderCenter(province.first, province.second[0]);
 		if (!possiblePosition)
 		{
 			Log(LogLevel::Warning) << "Could not find position for province " << province.first << ". Naval base not set.";
@@ -439,7 +520,7 @@ void HoI4::Buildings::addBunker(int stateID,
 
 	if (positionUnset)
 	{
-		auto possiblePosition = theMapData.getAnyBorderCenter(province);
+		auto possiblePosition = theMapData.GetAnyBorderCenter(province);
 		if (!possiblePosition)
 		{
 			Log(LogLevel::Warning) << "Could not find position for province " << province << ". Bunker not set.";
@@ -503,7 +584,7 @@ void HoI4::Buildings::addCoastalBunker(int stateID,
 
 	if (positionUnset)
 	{
-		auto possiblePosition = theMapData.getSpecifiedBorderCenter(province.first, province.second[0]);
+		auto possiblePosition = theMapData.GetSpecifiedBorderCenter(province.first, province.second[0]);
 		if (!possiblePosition)
 		{
 			Log(LogLevel::Warning) << "Could not find position for province " << province.first
@@ -567,7 +648,7 @@ void HoI4::Buildings::placeDockyards(const States& theStates,
 				if (connectingSeaProvinces != actualCoastalProvinces.end())
 				{
 					auto centermostPoint =
-						 theMapData.getSpecifiedBorderCenter(*theProvince, connectingSeaProvinces->second[0]);
+						 theMapData.GetSpecifiedBorderCenter(*theProvince, connectingSeaProvinces->second[0]);
 					if (centermostPoint)
 					{
 						BuildingPosition thePosition;
@@ -610,7 +691,7 @@ void HoI4::Buildings::placeSyntheticRefineries(const States& theStates, const Ma
 		if (!refineryPlaced)
 		{
 			const auto theProvince = *state.second.getProvinces().begin();
-			auto theProvincePoints = theMapData.getProvincePoints(theProvince);
+			auto theProvincePoints = theMapData.GetProvincePoints(theProvince);
 			if (theProvincePoints)
 			{
 				const auto centermostPoint = theProvincePoints->getCentermostPoint();
@@ -652,7 +733,7 @@ void HoI4::Buildings::placeNuclearReactors(const States& theStates, const Maps::
 		if (!reactorPlaced)
 		{
 			const auto theProvince = *state.second.getProvinces().begin();
-			auto theProvincePoints = theMapData.getProvincePoints(theProvince);
+			auto theProvincePoints = theMapData.GetProvincePoints(theProvince);
 			if (theProvincePoints)
 			{
 				const auto centermostPoint = theProvincePoints->getCentermostPoint();
@@ -672,4 +753,55 @@ void HoI4::Buildings::placeNuclearReactors(const States& theStates, const Maps::
 			}
 		}
 	}
+}
+void HoI4::Buildings::placeSupplyNodes(const std::map<int, int>& provinceToStateIDMap,
+	 const Maps::MapData& theMapData,
+	 const Configuration& theConfiguration)
+{
+	for (const auto& provinceAndStateID: provinceToStateIDMap)
+	{
+		addSupplyNodes(provinceAndStateID.second, provinceAndStateID.first, theMapData, theConfiguration);
+	}
+}
+void HoI4::Buildings::addSupplyNodes(int stateID,
+	 int province,
+	 const Maps::MapData& theMapData,
+	 const Configuration& theConfiguration)
+{
+	BuildingPosition position;
+	auto positionUnset = true;
+
+	const auto defaultSupplyNode = defaultSupplyNodes.find(std::make_pair(province, 0));
+	if (defaultSupplyNode != defaultSupplyNodes.end())
+	{
+		position = defaultSupplyNode->second;
+		positionUnset = false;
+	}
+
+	if (positionUnset)
+	{
+		auto possiblePosition = theMapData.GetAnyBorderCenter(province);
+		if (!possiblePosition)
+		{
+			Log(LogLevel::Warning) << "Could not find position for province " << province << ". Supply Node not set.";
+			return;
+		}
+
+		position.xCoordinate = possiblePosition->first;
+		position.yCoordinate = 11.0;
+		position.zCoordinate = possiblePosition->second;
+		position.rotation = 0.0;
+
+		if (theConfiguration.getDebug())
+		{
+			Log(LogLevel::Warning) << "The Supply Node in " << province
+										  << " at "
+											  "("
+										  << position.xCoordinate << ", " << position.zCoordinate
+										  << ") "
+											  "did not have a location in default HoI4.";
+		}
+	}
+
+	buildings.insert(std::make_pair(stateID, Building(stateID, "supply_node", position, 0)));
 }

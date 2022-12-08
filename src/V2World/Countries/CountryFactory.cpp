@@ -1,23 +1,22 @@
-#include "CountryFactory.h"
-#include "CommonRegexes.h"
-#include "Log.h"
-#include "ParserHelpers.h"
-#include "StringUtils.h"
-#include "V2World/Culture/CultureGroupsFactory.h"
-#include "V2World/Military/Leaders/TraitsFactory.h"
-#include "V2World/Technology/InventionsFactory.h"
+#include "src/V2World/Countries/CountryFactory.h"
+#include "external/common_items/CommonRegexes.h"
+#include "external/common_items/Log.h"
+#include "external/common_items/ParserHelpers.h"
+#include "external/common_items/StringUtils.h"
+#include "src/V2World/Culture/CultureGroupsFactory.h"
+#include "src/V2World/Military/Leaders/TraitsFactory.h"
+#include "src/V2World/Technology/InventionsFactory.h"
 #include <cmath>
 #include <sstream>
 
 
 
-Vic2::Country::Factory::Factory(const Configuration& theConfiguration,
+Vic2::Country::Factory::Factory(const commonItems::ModFilesystem& mod_filesystem,
 	 const StateDefinitions& theStateDefinitions,
 	 std::shared_ptr<CultureGroups> theCultureGroups_):
 	 theCultureGroups(std::move(theCultureGroups_)),
-	 theInventions(Inventions::Factory().loadInventions(theConfiguration)),
-	 leaderFactory(
-		  std::make_unique<Leader::Factory>(std::move(*Traits::Factory().loadTraits(theConfiguration.getVic2Path())))),
+	 theInventions(Inventions::Factory().LoadInventions(mod_filesystem)),
+	 leaderFactory(std::make_unique<Leader::Factory>(std::move(*Traits::Factory().LoadTraits(mod_filesystem)))),
 	 stateFactory(std::make_unique<State::Factory>())
 {
 	registerKeyword("capital", [this](std::istream& theStream) {
@@ -58,7 +57,7 @@ Vic2::Country::Factory::Factory(const Configuration& theConfiguration,
 		country->primaryCulture = commonItems::remQuotes(commonItems::singleString{theStream}.getString());
 		country->acceptedCultures.insert(country->primaryCulture);
 
-		auto cultureGroupOption = theCultureGroups->getGroup(country->primaryCulture);
+		auto cultureGroupOption = theCultureGroups->GetGroup(country->primaryCulture);
 		if (cultureGroupOption)
 		{
 			country->primaryCultureGroup = *cultureGroupOption;
@@ -159,8 +158,8 @@ std::unique_ptr<Vic2::Country> Vic2::Country::Factory::createCountry(const std::
 {
 	country = std::make_unique<Country>();
 	country->tag = theTag;
-	country->color = commonCountryData.getColor();
-	country->shipNames = commonCountryData.getUnitNames();
+	country->color = commonCountryData.GetColor();
+	country->shipNames = commonCountryData.GetUnitNames();
 
 	rulingPartyID = 0; // Bad value, but normal for Rebel faction.
 	parseStream(theStream);

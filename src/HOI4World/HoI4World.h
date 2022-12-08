@@ -3,59 +3,60 @@
 
 
 
-#include "CountryCategories/CountryCategories.h"
-#include "Decisions/Decisions.h"
-#include "Diplomacy/AIPeaces.h"
-#include "Events/Events.h"
-#include "GameRules/GameRules.h"
-#include "HOI4World/Map/Railway.h"
-#include "HoI4Country.h"
-#include "HoI4Localisation.h"
-#include "Ideas/Ideas.h"
-#include "Ideologies/Ideologies.h"
-#include "Ideologies/Ideology.h"
-#include "IntelligenceAgencies/IntelligenceAgencies.h"
-#include "Leaders/Advisor.h"
-#include "Localisations/ArticleRules/ArticleRules.h"
-#include "Map/Buildings.h"
-#include "Map/CoastalProvinces.h"
-#include "Map/Railways.h"
-#include "Map/StrategicRegion.h"
-#include "Map/StrategicRegions.h"
-#include "Map/SupplyZones.h"
-#include "Mappers/CasusBelli/CasusBellis.h"
-#include "Mappers/Country/CountryMapper.h"
-#include "Mappers/CountryName/CountryNameMapper.h"
-#include "Mappers/FactionName/FactionNameMapperFactory.h"
-#include "Mappers/FlagsToIdeas/FlagsToIdeasMapper.h"
-#include "Mappers/Government/GovernmentMapper.h"
-#include "Mappers/Graphics/GraphicsMapper.h"
-#include "Mappers/Ideology/IdeologyMapper.h"
-#include "Mappers/Provinces/ProvinceMapper.h"
-#include "Mappers/Technology/TechMapper.h"
-#include "Maps/MapData.h"
-#include "Maps/ProvinceDefinitions.h"
-#include "Military/DivisionTemplate.h"
-#include "MilitaryMappings/AllMilitaryMappings.h"
-#include "MilitaryMappings/HoI4UnitType.h"
-#include "MilitaryMappings/UnitMappings.h"
-#include "Modifiers/DynamicModifiers.h"
-#include "Modifiers/Modifier.h"
-#include "Names/Names.h"
-#include "OccupationLaws/OccupationLawsFactory.h"
-#include "OnActions.h"
-#include "Operations/Operations.h"
-#include "OperativeNames/OperativeNames.h"
-#include "Parser.h"
-#include "ScriptedEffects/ScriptedEffects.h"
-#include "ScriptedLocalisations/ScriptedLocalisations.h"
-#include "ScriptedTriggers/ScriptedTriggers.h"
-#include "Sounds/SoundEffect.h"
-#include "States/DefaultState.h"
-#include "States/HoI4State.h"
-#include "States/HoI4States.h"
-#include "V2World/Countries/Country.h"
-#include "V2World/World/World.h"
+#include "external/common_items/ConvenientParser.h"
+#include "src/HOI4World/Countries/UnionCountry.h"
+#include "src/HOI4World/CountryCategories/CountryCategories.h"
+#include "src/HOI4World/Decisions/Decisions.h"
+#include "src/HOI4World/Events/Events.h"
+#include "src/HOI4World/FocusTrees/AdjustedBranches.h"
+#include "src/HOI4World/GameRules/GameRules.h"
+#include "src/HOI4World/HoI4Country.h"
+#include "src/HOI4World/HoI4Localisation.h"
+#include "src/HOI4World/Ideas/Ideas.h"
+#include "src/HOI4World/Ideologies/Ideologies.h"
+#include "src/HOI4World/Ideologies/Ideology.h"
+#include "src/HOI4World/IntelligenceAgencies/IntelligenceAgencies.h"
+#include "src/HOI4World/Leaders/Advisor.h"
+#include "src/HOI4World/Localisations/ArticleRules/ArticleRules.h"
+#include "src/HOI4World/Map/Buildings.h"
+#include "src/HOI4World/Map/CoastalProvinces.h"
+#include "src/HOI4World/Map/Railway.h"
+#include "src/HOI4World/Map/Railways.h"
+#include "src/HOI4World/Map/StrategicRegion.h"
+#include "src/HOI4World/Map/StrategicRegions.h"
+#include "src/HOI4World/Map/SupplyZones.h"
+#include "src/HOI4World/Military/DivisionTemplate.h"
+#include "src/HOI4World/MilitaryMappings/AllMilitaryMappings.h"
+#include "src/HOI4World/MilitaryMappings/HoI4UnitType.h"
+#include "src/HOI4World/MilitaryMappings/UnitMappings.h"
+#include "src/HOI4World/Modifiers/DynamicModifiers.h"
+#include "src/HOI4World/Modifiers/Modifier.h"
+#include "src/HOI4World/Names/Names.h"
+#include "src/HOI4World/OccupationLaws/OccupationLawsFactory.h"
+#include "src/HOI4World/OnActions.h"
+#include "src/HOI4World/Operations/Operations.h"
+#include "src/HOI4World/OperativeNames/OperativeNames.h"
+#include "src/HOI4World/ScriptedEffects/ScriptedEffects.h"
+#include "src/HOI4World/ScriptedLocalisations/ScriptedLocalisations.h"
+#include "src/HOI4World/ScriptedTriggers/ScriptedTriggers.h"
+#include "src/HOI4World/Sounds/SoundEffect.h"
+#include "src/HOI4World/States/DefaultState.h"
+#include "src/HOI4World/States/HoI4State.h"
+#include "src/HOI4World/States/HoI4States.h"
+#include "src/Mappers/CasusBelli/CasusBellis.h"
+#include "src/Mappers/Country/CountryMapper.h"
+#include "src/Mappers/CountryName/CountryNameMapper.h"
+#include "src/Mappers/FactionName/FactionNameMapperFactory.h"
+#include "src/Mappers/FlagsToIdeas/FlagsToIdeasMapper.h"
+#include "src/Mappers/Government/GovernmentMapper.h"
+#include "src/Mappers/Graphics/GraphicsMapper.h"
+#include "src/Mappers/Ideology/IdeologyMapper.h"
+#include "src/Mappers/Provinces/ProvinceMapper.h"
+#include "src/Mappers/Technology/TechMapper.h"
+#include "src/Maps/MapData.h"
+#include "src/Maps/ProvinceDefinitions.h"
+#include "src/V2World/Countries/Country.h"
+#include "src/V2World/World/World.h"
 #include <map>
 #include <memory>
 #include <optional>
@@ -82,6 +83,7 @@ class World: commonItems::parser
 	[[nodiscard]] const auto& getTheStates() const { return *states; }
 	[[nodiscard]] const auto& getStrategicRegions() const { return *strategicRegions; }
 	[[nodiscard]] const auto& getCountries() const { return countries; }
+	[[nodiscard]] const auto& GetUnionCountries() const { return union_countries_; }
 	[[nodiscard]] const auto& getMilitaryMappings() const { return *theMilitaryMappings; }
 	[[nodiscard]] auto& getGraphicsMapper() { return *graphicsMapper; }
 	[[nodiscard]] auto& getFactionNameMapper() { return *factionNameMapper; }
@@ -98,7 +100,6 @@ class World: commonItems::parser
 	[[nodiscard]] const auto& getIntelligenceAgencies() const { return intelligenceAgencies; }
 	[[nodiscard]] const auto& getOperativeNames() const { return *operativeNames; }
 	[[nodiscard]] const auto& getOperations() const { return *operations; }
-	[[nodiscard]] const auto& getPeaces() const { return *peaces; }
 	[[nodiscard]] const auto& getIdeologies() const { return *ideologies; }
 	[[nodiscard]] const auto& getTheIdeas() const { return *theIdeas; }
 	[[nodiscard]] const auto& getOccupationLaws() const { return *occupationLaws; }
@@ -112,7 +113,18 @@ class World: commonItems::parser
 	[[nodiscard]] const auto& getLocalisation() const { return *hoi4Localisations; }
 	[[nodiscard]] const auto& getSoundEffects() const { return soundEffects; }
 	[[nodiscard]] const auto& getDate() const { return *theDate; }
-	[[nodiscard]] const auto& getCustomizedFocusBranches() const { return customizedFocusBranches; }
+	[[nodiscard]] const auto& getAdjustedFocusBranches() const { return adjustedBranches->getBranchNames(); }
+	[[nodiscard]] const std::map<std::string, std::string>& GetIdeologicalCostModifiers() const
+	{
+		return ideological_cost_modifiers_;
+	}
+	[[nodiscard]] const std::map<std::string, std::string>& GetIdeologicalAiPeace() const
+	{
+		return ideological_ai_peace_;
+	}
+	[[nodiscard]] const std::map<std::string, std::string>& GetUnitMedals() const { return ideological_unit_medals_; }
+
+	[[nodiscard]] const std::vector<std::string>& GetDynamicAiPeace() const { return dynamic_ai_peace_; }
 
 	const std::map<int, HoI4::State>& getStates() const { return states->getStates(); }
 	const std::map<int, int>& getProvinceToStateIDMap() const { return states->getProvinceToStateIDMap(); }
@@ -149,7 +161,9 @@ class World: commonItems::parser
 	void convertIdeologySupport();
 
 	void convertIndustry(const Configuration& theConfiguration);
+	void convertInfrastructure();
 	void addStatesToCountries(const Mappers::ProvinceMapper& provinceMapper);
+	void CalculateStateAvrgPopPerProv();
 	void addDominions(Mappers::CountryMapper::Factory& countryMapperFactory);
 	void transferPuppetsToDominions();
 	void addUnrecognizedNations(Mappers::CountryMapper::Factory& countryMapperFactory,
@@ -199,29 +213,32 @@ class World: commonItems::parser
 	std::optional<std::string> returnSphereLeader(std::shared_ptr<HoI4::Country> possibleSphereling) const;
 	bool governmentsAllowFaction(const std::string& leaderGovernment, const std::string& allyGovernment) const;
 
-	void addFocusTrees();
+	void addFocusTrees(bool debug);
 	void adjustResearchFocuses();
 
 	void addCountryElectionEvents(const std::set<std::string>& theMajorIdeologies,
-		 const Vic2::Localisations& vic2Localisations);
+		 const Vic2::Localisations& vic2Localisations,
+		 bool debug);
 
 	std::vector<std::string> getStrongestNavyGps();
 
 	std::set<std::string> getSouthAsianCountries() const;
 
-	std::shared_ptr<Country> getDominion(const std::string& ownerTag,
-		 const std::shared_ptr<Country>& owner,
-		 const std::string& region,
-		 const Regions& regions,
+	std::shared_ptr<Country> getDominion(const std::shared_ptr<Country>& owner,
+		 const std::set<int>& area,
 		 Mappers::GraphicsMapper& graphicsMapper,
 		 Names& names);
+	std::string getBestRegion(const std::set<int>& area, const std::string& ownerTag);
+	std::set<int> getAreaStates(const std::set<int>& area,
+		 const std::shared_ptr<Country>& country,
+		 const std::vector<std::set<int>>& areas,
+		 const std::string& ownerRegion);
+	std::vector<std::pair<std::string, int>> sortAreaRegions(const std::map<std::string, int>& regions);
 	std::shared_ptr<Country> getUnrecognizedNation(const std::string& region,
-		 const Regions& regions,
 		 Mappers::GraphicsMapper& graphicsMapper,
 		 Names& names);
 
 	bool dominionIsReleasable(const Country& dominion);
-	void addProvincesToHomeAreas();
 
 	void recordUnbuiltCanals(const Vic2::World& sourceWorld);
 
@@ -248,6 +265,7 @@ class World: commonItems::parser
 	std::map<std::string, std::shared_ptr<HoI4::Country>> countries;
 	std::map<std::string, std::shared_ptr<HoI4::Country>> landedCountries;
 	std::vector<std::shared_ptr<HoI4::Country>> greatPowers;
+	std::vector<HoI4::UnionCountry> union_countries_;
 
 	std::unique_ptr<Ideologies> ideologies;
 	std::map<std::string, std::vector<std::string>> ideologicalLeaderTraits;
@@ -257,7 +275,6 @@ class World: commonItems::parser
 
 	std::vector<std::shared_ptr<Faction>> factions;
 	std::unique_ptr<HoI4::decisions> theDecisions;
-	std::unique_ptr<HoI4::AiPeaces> peaces;
 	std::unique_ptr<HoI4::Events> events;
 	std::unique_ptr<HoI4::OnActions> onActions;
 
@@ -291,7 +308,13 @@ class World: commonItems::parser
 	std::unique_ptr<Regions> theRegions;
 	std::map<std::pair<std::string, std::string>, std::shared_ptr<Country>> dominions;
 	std::map<std::string, std::shared_ptr<Country>> unrecognizedNations;
-	std::vector<std::string> customizedFocusBranches;
+	std::unique_ptr<AdjustedBranches> adjustedBranches;
+
+	std::map<std::string, std::string> ideological_cost_modifiers_;
+	std::map<std::string, std::string> ideological_ai_peace_;
+	std::map<std::string, std::string> ideological_unit_medals_;
+
+	std::vector<std::string> dynamic_ai_peace_;
 };
 
 } // namespace HoI4

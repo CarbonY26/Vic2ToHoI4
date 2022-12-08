@@ -3,16 +3,16 @@
 
 
 
-#include "HOI4World/Characters/AdmiralDataFactory.h"
-#include "HOI4World/Characters/AdvisorDataFactory.h"
-#include "HOI4World/Characters/Character.h"
-#include "HOI4World/Characters/CommanderDataFactory.h"
-#include "HOI4World/Characters/CountryLeaderDataFactory.h"
-#include "HOI4World/Characters/PortraitsFactory.h"
-#include "HOI4World/HoI4Localisation.h"
-#include "HOI4World/Names/Names.h"
-#include "Mappers/Graphics/GraphicsMapper.h"
-#include "Parser.h"
+#include "external/common_items/ConvenientParser.h"
+#include "src/HOI4World/Characters/AdmiralDataFactory.h"
+#include "src/HOI4World/Characters/AdvisorDataFactory.h"
+#include "src/HOI4World/Characters/Character.h"
+#include "src/HOI4World/Characters/CommanderDataFactory.h"
+#include "src/HOI4World/Characters/CountryLeaderDataFactory.h"
+#include "src/HOI4World/Characters/PortraitsFactory.h"
+#include "src/HOI4World/HoI4Localisation.h"
+#include "src/HOI4World/Names/Names.h"
+#include "src/Mappers/Graphics/GraphicsMapper.h"
 
 
 
@@ -36,9 +36,11 @@ class Character::Factory: commonItems::parser
 		 std::mt19937& generator);
 	[[nodiscard]] Character createNewGeneral(const Vic2::Leader& src_general,
 		 const std::string& tag,
+		 std::string_view portrait_location,
 		 Localisation& localisation);
 	[[nodiscard]] Character createNewAdmiral(const Vic2::Leader& src_admiral,
 		 const std::string& tag,
+		 std::string_view portrait_location,
 		 Localisation& localisation);
 	[[nodiscard]] Character importCharacter(std::string_view id, std::istream& input);
 

@@ -1,35 +1,39 @@
-#include "OutHoi4World.h"
-#include "CountryCategories/OutCountryCategories.h"
-#include "Decisions/OutDecisions.h"
-#include "Diplomacy/OutAiPeaces.h"
-#include "Events/OutEvents.h"
-#include "GameRules/OutGameRules.h"
-#include "Ideas/OutIdeas.h"
-#include "Ideologies/OutIdeologies.h"
-#include "IntelligenceAgencies/OutIntelligenceAgencies.h"
-#include "Leaders/OutAdvisor.h"
-#include "Log.h"
-#include "Map/OutBuildings.h"
-#include "Map/OutStrategicRegions.h"
-#include "Map/OutSupplyZones.h"
-#include "Modifiers/OutDynamicModifiers.h"
-#include "OSCompatibilityLayer.h"
-#include "OccupationLaws/OutOccupationLaws.h"
-#include "Operations/OutOperations.h"
-#include "OperativeNames/OutOperativeNames.h"
-#include "OutFocusTree.h"
-#include "OutHoi4/Interface/OutMonarchsInterface.h"
-#include "OutHoi4/Map/OutRailways.h"
-#include "OutHoi4/Map/OutSupplyNodes.h"
-#include "OutHoi4Country.h"
-#include "OutLocalisation.h"
-#include "OutOnActions.h"
-#include "ScriptedEffects/OutScriptedEffects.h"
-#include "ScriptedLocalisations/OutScriptedLocalisations.h"
-#include "ScriptedTriggers/OutScriptedTriggers.h"
-#include "Sounds/OutSounds.h"
-#include "States/OutHoI4States.h"
-#include "outDifficultySettings.h"
+#include "src/OutHoi4/OutHoi4World.h"
+#include "external/common_items/Log.h"
+#include "external/common_items/OSCompatibilityLayer.h"
+#include "src/OutHoi4/Countries/OutUnionCountry.h"
+#include "src/OutHoi4/CountryCategories/OutCountryCategories.h"
+#include "src/OutHoi4/Decisions/OutDecisions.h"
+#include "src/OutHoi4/Events/OutEvents.h"
+#include "src/OutHoi4/GameRules/OutGameRules.h"
+#include "src/OutHoi4/Ideas/OutIdeas.h"
+#include "src/OutHoi4/Ideologies/OutIdeologies.h"
+#include "src/OutHoi4/IntelligenceAgencies/OutIntelligenceAgencies.h"
+#include "src/OutHoi4/Interface/OutMonarchsInterface.h"
+#include "src/OutHoi4/Leaders/OutAdvisor.h"
+#include "src/OutHoi4/Map/OutBuildings.h"
+#include "src/OutHoi4/Map/OutRailways.h"
+#include "src/OutHoi4/Map/OutStrategicRegions.h"
+#include "src/OutHoi4/Map/OutSupplyNodes.h"
+#include "src/OutHoi4/Map/OutSupplyZones.h"
+#include "src/OutHoi4/Modifiers/OutDynamicModifiers.h"
+#include "src/OutHoi4/OccupationLaws/OutOccupationLaws.h"
+#include "src/OutHoi4/Operations/OutOperations.h"
+#include "src/OutHoi4/OperativeNames/OutOperativeNames.h"
+#include "src/OutHoi4/OutFocusTree.h"
+#include "src/OutHoi4/OutHoi4Country.h"
+#include "src/OutHoi4/OutLocalisation.h"
+#include "src/OutHoi4/OutOnActions.h"
+#include "src/OutHoi4/PeaceConference/OutAiPeace.h"
+#include "src/OutHoi4/PeaceConference/OutCostModifiers.h"
+#include "src/OutHoi4/ScriptedEffects/OutScriptedEffects.h"
+#include "src/OutHoi4/ScriptedLocalisations/OutScriptedLocalisations.h"
+#include "src/OutHoi4/ScriptedTriggers/OutScriptedTriggers.h"
+#include "src/OutHoi4/Sounds/OutSounds.h"
+#include "src/OutHoi4/States/OutHoI4States.h"
+#include "src/OutHoi4/UnitMedals/OutUnitMedals.h"
+#include "src/OutHoi4/outDifficultySettings.h"
+#include <algorithm>
 #include <fstream>
 #include <iterator>
 #include <optional>
@@ -57,6 +61,7 @@ void outputUnitNames(const std::map<std::string, std::shared_ptr<Country>>& coun
 void outputMap(const States& states, const StrategicRegions& strategicRegions, const std::string& outputName);
 void outputGenericFocusTree(const HoI4FocusTree& genericFocusTree, const std::string& outputName);
 void outputCountries(const std::map<std::string, std::shared_ptr<Country>>& countries,
+	 const std::vector<UnionCountry>& union_countries,
 	 const allMilitaryMappings& theMilitaryMappings,
 	 const std::string& outputName,
 	 const Configuration& theConfiguration);
@@ -69,7 +74,7 @@ void outputBookmarks(const std::vector<std::shared_ptr<Country>>& greatPowers,
 	 const std::optional<std::string> humanCountry,
 	 const date& vic2Date,
 	 const std::string& outputName);
-void copyCustomizedFocusFiles(const std::string& outputName, const std::vector<std::string>& branchNames);
+void copyAdjustedFocusFiles(const std::string& outputName, const std::vector<std::string>& branchNames);
 
 } // namespace HoI4
 
@@ -206,14 +211,17 @@ void HoI4::OutputWorld(const World& world,
 	outputSupplyZones(world.getSupplyZones(), outputName);
 	outputRelations(outputName, world.getMajorIdeologies());
 	outputGenericFocusTree(world.getGenericFocusTree(), outputName);
-	outputCountries(world.getCountries(), world.getMilitaryMappings(), outputName, theConfiguration);
+	outputCountries(world.getCountries(),
+		 world.GetUnionCountries(),
+		 world.getMilitaryMappings(),
+		 outputName,
+		 theConfiguration);
 	outputBuildings(world.getBuildings(), outputName);
 	outputSupplyNodes("output/" + outputName, world.getSupplyNodes());
-	outputRailways("output/" + outputName, world.getRailways()->getRailways());
+	outputRailways("output/" + outputName, world.getRailways()->GetRailways());
 	outputDecisions(world.getDecisions(), world.getMajorIdeologies(), outputName);
 	outputEvents(world.getEvents(), outputName);
 	outputOnActions(world.getOnActions(), world.getMajorIdeologies(), outputName);
-	outAiPeaces(world.getPeaces(), world.getMajorIdeologies(), outputName);
 	outputIdeologies(world.getIdeologies(), outputName);
 	outputLeaderTraits(world.getIdeologicalLeaderTraits(), world.getMajorIdeologies(), outputName);
 	outputGenericAdvisors(world.getActiveIdeologicalAdvisors(), outputName);
@@ -232,7 +240,10 @@ void HoI4::OutputWorld(const World& world,
 	outCountryCategories(world.getCountryCategories(), outputName);
 	outputSounds(outputName, world.getSoundEffects());
 	outMonarchInterface(outputName, world.getCountries());
-	copyCustomizedFocusFiles(outputName, world.getCustomizedFocusBranches());
+	copyAdjustedFocusFiles(outputName, world.getAdjustedFocusBranches());
+	OutputCostModifiers(outputName, world.getMajorIdeologies(), world.GetIdeologicalCostModifiers());
+	OutputAiPeace(outputName, world.getMajorIdeologies(), world.GetIdeologicalAiPeace(), world.GetDynamicAiPeace());
+	OutputUnitMedals(outputName, world.getMajorIdeologies(), world.GetUnitMedals());
 }
 
 
@@ -381,6 +392,7 @@ void HoI4::outputGenericFocusTree(const HoI4FocusTree& genericFocusTree, const s
 
 
 void HoI4::outputCountries(const std::map<std::string, std::shared_ptr<Country>>& countries,
+	 const std::vector<UnionCountry>& union_countries,
 	 const allMilitaryMappings& theMilitaryMappings,
 	 const std::string& outputName,
 	 const Configuration& theConfiguration)
@@ -411,6 +423,16 @@ void HoI4::outputCountries(const std::map<std::string, std::shared_ptr<Country>>
 			const auto& specificMilitaryMappings = theMilitaryMappings.getMilitaryMappings(theConfiguration.getVic2Mods());
 			outputCountry(specificMilitaryMappings.getDivisionTemplates(), *country, theConfiguration);
 		}
+	}
+
+	std::ofstream union_countries_file("output/" + outputName + "/common/countries/cosmetic.txt", std::ios::app);
+	if (!union_countries_file.is_open())
+	{
+		throw std::runtime_error("Could not open output/" + outputName + "/common/countries/cosmetic.txt");
+	}
+	for (const auto& union_country: union_countries)
+	{
+		union_countries_file << union_country;
 	}
 
 	std::ofstream portraitsFile("output/" + outputName + "/portraits/conv_portraits.txt");
@@ -635,7 +657,7 @@ void HoI4::outputBookmarks(const std::vector<std::shared_ptr<Country>>& greatPow
 	}
 }
 
-void HoI4::copyCustomizedFocusFiles(const std::string& outputName, const std::vector<std::string>& branchNames)
+void HoI4::copyAdjustedFocusFiles(const std::string& outputName, const std::vector<std::string>& branchNames)
 {
 	for (const auto& branch: branchNames)
 	{

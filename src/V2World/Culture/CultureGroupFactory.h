@@ -1,9 +1,11 @@
-#ifndef CULTURE_GROUP_FACTORY_H
-#define CULTURE_GROUP_FACTORY_H
+#ifndef SRC_V2WORLD_CULTURE_CULTURE_GROUP_FACTORY_H
+#define SRC_V2WORLD_CULTURE_CULTURE_GROUP_FACTORY_H
 
 
 
-#include "Parser.h"
+#include "external/common_items/Parser.h"
+#include "src/V2World/Culture/CultureGroup.h"
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -17,14 +19,15 @@ class CultureGroupFactory: commonItems::parser
   public:
 	CultureGroupFactory();
 
-	[[nodiscard]] std::vector<std::string> getCultureGroup(std::istream& theStream);
+	[[nodiscard]] CultureGroup GetCultureGroup(std::istream& the_stream);
 
   private:
-	std::vector<std::string> cultureGroup;
+	std::vector<std::string> culture_group_;
+	std::optional<std::string> union_tag_;
 };
 
 } // namespace Vic2
 
 
 
-#endif // CULTURE_GROUP_FACTORY_H
+#endif // SRC_V2WORLD_CULTURE_CULTURE_GROUP_FACTORY_H

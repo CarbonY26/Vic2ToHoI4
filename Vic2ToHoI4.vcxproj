@@ -47,7 +47,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;_SILENCE_CXX20_U8PATH_DEPRECATION_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir)/src;external/common_items;external/bitmap;external\common_items\ZipLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <EnablePREfast>false</EnablePREfast>
       <AdditionalOptions>/Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
@@ -80,6 +80,7 @@
     <ClCompile Include="external\common_items\GameVersion.cpp" />
     <ClCompile Include="external\common_items\iconvlite.cpp" />
     <ClCompile Include="external\common_items\Log.cpp" />
+    <ClCompile Include="external\common_items\ModLoader\ModFilesystem.cpp" />
     <ClCompile Include="external\common_items\ModLoader\ModLoader.cpp" />
     <ClCompile Include="external\common_items\ModLoader\ModParser.cpp" />
     <ClCompile Include="external\common_items\OSCommonLayer.cpp" />
@@ -98,6 +99,7 @@
     <ClCompile Include="src\HOI4World\Characters\CountryLeaderDataFactory.cpp" />
     <ClCompile Include="src\HOI4World\Characters\PortraitsFactory.cpp" />
     <ClCompile Include="src\HOI4World\Characters\PortraitTypeFactory.cpp" />
+    <ClCompile Include="src\HOI4World\Countries\UnionCountry.cpp" />
     <ClCompile Include="src\HOI4World\CountryCategories\CountryCategories.cpp" />
     <ClCompile Include="src\HOI4World\CountryCategories\CountryGrammarRuleFactory.cpp" />
     <ClCompile Include="src\HOI4World\CountryCategories\CountryGrammarFactory.cpp" />
@@ -109,6 +111,7 @@
     <ClCompile Include="src\HOI4World\Events\CapitulationEvents.cpp" />
     <ClCompile Include="src\HOI4World\Events\LarOccupationEvents.cpp" />
     <ClCompile Include="src\HOI4World\Events\NavalTreatyEventsUpdaters.cpp" />
+    <ClCompile Include="src\HOI4World\FocusTrees\AdjustedBranches.cpp" />
     <ClCompile Include="src\HOI4World\IntelligenceAgencies\IntelligenceAgencies.cpp" />
     <ClCompile Include="src\HOI4World\IntelligenceAgencies\IntelligenceAgency.cpp" />
     <ClCompile Include="src\HOI4World\IntelligenceAgencies\IntelligenceAgencyLogoMapping.cpp" />
@@ -120,6 +123,7 @@
     <ClCompile Include="src\HOI4World\Localisations\GrammarMappings.cpp" />
     <ClCompile Include="src\HOI4World\Map\HoI4ProvinceDefinitionImporter.cpp" />
     <ClCompile Include="src\HOI4World\Map\HoI4Provinces.cpp" />
+    <ClCompile Include="src\HOI4World\Map\PathPoint.cpp" />
     <ClCompile Include="src\HOI4World\Map\PossiblePath.h" />
     <ClCompile Include="src\HOI4World\Map\Railways.cpp" />
     <ClCompile Include="src\HOI4World\Map\StrategicRegions.cpp" />
@@ -142,6 +146,13 @@
     <ClCompile Include="src\HOI4World\OperativeNames\OperativeNamesMappingsFactory.cpp" />
     <ClCompile Include="src\HOI4World\OperativeNames\OperativeNamesSetDetails.cpp" />
     <ClCompile Include="src\HOI4World\OperativeNames\OperativeNamesSetFactory.cpp" />
+    <ClCompile Include="src\HOI4World\PeaceConferences\DynamicAiPeaces.cpp" />
+    <ClCompile Include="src\HOI4World\PeaceConferences\IdeologicalAiPeace.cpp" />
+    <ClCompile Include="src\HOI4World\PeaceConferences\IdeologicalCostModifiers.cpp" />
+    <ClCompile Include="src\HOI4World\PlaneDesigns\PlaneDesign.cpp" />
+    <ClCompile Include="src\HOI4World\PlaneDesigns\PlaneDesigns.cpp" />
+    <ClCompile Include="src\HOI4World\PlaneDesigns\PlaneModules.cpp" />
+    <ClCompile Include="src\HOI4World\PlaneDesigns\PossiblePlaneDesigns.cpp" />
     <ClCompile Include="src\HOI4World\Regions\RegionFactory.cpp" />
     <ClCompile Include="src\HOI4World\Regions\Regions.cpp" />
     <ClCompile Include="src\HOI4World\Regions\RegionsFactory.cpp" />
@@ -162,6 +173,7 @@
     <ClCompile Include="src\HOI4World\TankDesigns\TankDesigns.cpp" />
     <ClCompile Include="src\HOI4World\TankDesigns\TankModules.cpp" />
     <ClCompile Include="src\HOI4World\TankDesigns\TankUpgrades.cpp" />
+    <ClCompile Include="src\HOI4World\UnitMedals\IdeologicalUnitMedals.cpp" />
     <ClCompile Include="src\HOI4World\WarCreator\MapUtils.cpp" />
     <ClCompile Include="src\Mappers\CasusBelli\CasusBelliMappingFactory.cpp" />
     <ClCompile Include="src\Mappers\CasusBelli\CasusBellis.cpp" />
@@ -203,6 +215,8 @@
     <ClCompile Include="src\OutHoi4\Characters\OutCountryLeaderData.cpp" />
     <ClCompile Include="src\OutHoi4\Characters\OutCountryLeaderData.h" />
     <ClCompile Include="src\OutHoi4\Characters\OutPortrait.cpp" />
+    <ClCompile Include="src\OutHoi4\Countries\OutEquipment.cpp" />
+    <ClCompile Include="src\OutHoi4\Countries\OutUnionCountry.cpp" />
     <ClCompile Include="src\OutHoi4\CountryCategories\OutCountryCategories.cpp" />
     <ClCompile Include="src\OutHoi4\CountryCategories\OutCountryCategory.cpp" />
     <ClCompile Include="src\OutHoi4\Decisions\OutDecision.cpp" />
@@ -210,8 +224,6 @@
     <ClCompile Include="src\OutHoi4\Decisions\OutDecisionsCategory.cpp" />
     <ClCompile Include="src\OutHoi4\Decisions\OutDecisionsInCategory.cpp" />
     <ClCompile Include="src\OutHoi4\Decisions\OutDecisions.cpp" />
-    <ClCompile Include="src\OutHoi4\Diplomacy\OutAiPeace.cpp" />
-    <ClCompile Include="src\OutHoi4\Diplomacy\OutAiPeaces.cpp" />
     <ClCompile Include="src\OutHoi4\Diplomacy\OutWar.cpp" />
     <ClCompile Include="src\OutHoi4\Events\OutEventOption.cpp" />
     <ClCompile Include="src\OutHoi4\Events\OutEvent.cpp" />
@@ -271,6 +283,11 @@
     <ClCompile Include="src\OutHoi4\OutOnActions.cpp" />
     <ClCompile Include="src\OutHoI4\OutSharedFocus.cpp" />
     <ClCompile Include="src\OutHoi4\OutTechnologies.cpp" />
+    <ClCompile Include="src\OutHoi4\PeaceConference\OutAiPeace.cpp" />
+    <ClCompile Include="src\OutHoi4\PeaceConference\OutCostModifiers.cpp" />
+    <ClCompile Include="src\OutHoi4\PlaneDesigns\OutPlaneDesign.cpp" />
+    <ClCompile Include="src\OutHoi4\PlaneDesigns\OutPlaneDesigns.cpp" />
+    <ClCompile Include="src\OutHoi4\PlaneDesigns\OutPlaneModules.cpp" />
     <ClCompile Include="src\OutHoi4\ScriptedEffects\OutScriptedEffect.cpp" />
     <ClCompile Include="src\OutHoi4\ScriptedEffects\OutScriptedEffects.cpp" />
     <ClCompile Include="src\OutHoi4\ScriptedLocalisations\OutScriptedLocalisation.cpp" />
@@ -296,9 +313,6 @@
     <ClCompile Include="src\HOI4World\Decisions\PoliticalDecisions.cpp" />
     <ClCompile Include="src\HOI4World\Decisions\ResourceProspectingDecisions.cpp" />
     <ClCompile Include="src\HOI4World\Decisions\StabilityWarSupportDecisions.cpp" />
-    <ClCompile Include="src\HOI4World\Diplomacy\AIPeace.cpp" />
-    <ClCompile Include="src\HOI4World\Diplomacy\AIPeaces.cpp" />
-    <ClCompile Include="src\HOI4World\Diplomacy\AiPeacesUpdater.cpp" />
     <ClCompile Include="src\HOI4World\Diplomacy\HoI4War.cpp" />
     <ClCompile Include="src\HOI4World\Events\Event.cpp" />
     <ClCompile Include="src\HOI4World\Events\EventHelpers.cpp" />
@@ -388,8 +402,10 @@
     <ClCompile Include="src\OutHoi4\TankDesigns\OutTankDesigns.cpp" />
     <ClCompile Include="src\OutHoi4\TankDesigns\OutTankModules.cpp" />
     <ClCompile Include="src\OutHoi4\TankDesigns\OutTankUpgrades.cpp" />
+    <ClCompile Include="src\OutHoi4\UnitMedals\OutUnitMedals.cpp" />
     <ClCompile Include="src\V2World\Ai\AIFactory.cpp" />
     <ClCompile Include="src\V2World\Countries\CommonCountriesDataFactory.cpp" />
+    <ClCompile Include="src\V2World\Countries\CommonCountryData.cpp" />
     <ClCompile Include="src\V2World\Countries\CommonCountryDataFactory.cpp" />
     <ClCompile Include="src\V2World\Countries\Country.cpp" />
     <ClCompile Include="src\V2World\Countries\CountryFactory.cpp" />
@@ -455,6 +471,7 @@
     <ClInclude Include="external\common_items\GameVersion.h" />
     <ClInclude Include="external\common_items\iconvlite.h" />
     <ClInclude Include="external\common_items\Log.h" />
+    <ClInclude Include="external\common_items\ModLoader\ModFilesystem.h" />
     <ClInclude Include="external\common_items\ModLoader\ModLoader.h" />
     <ClInclude Include="external\common_items\ModLoader\ModParser.h" />
     <ClInclude Include="external\common_items\OSCompatibilityLayer.h" />
@@ -478,6 +495,8 @@
     <ClInclude Include="src\HOI4World\Characters\Portrait.h" />
     <ClInclude Include="src\HOI4World\Characters\PortraitsFactory.h" />
     <ClInclude Include="src\HOI4World\Characters\PortraitTypeFactory.h" />
+    <ClInclude Include="src\HOI4World\Countries\Equipment.h" />
+    <ClInclude Include="src\HOI4World\Countries\UnionCountry.h" />
     <ClInclude Include="src\HOI4World\CountryCategories\CountryCategories.h" />
     <ClInclude Include="src\HOI4World\CountryCategories\CountryGrammarRule.h" />
     <ClInclude Include="src\HOI4World\CountryCategories\CountryGrammarRuleFactory.h" />
@@ -490,6 +509,7 @@
     <ClInclude Include="src\HOI4World\Events\EventsBuilder.h" />
     <ClInclude Include="src\HOI4World\Events\LarOccupationEvents.h" />
     <ClInclude Include="src\HOI4World\Events\NavalTreatyEventsUpdaters.h" />
+    <ClInclude Include="src\HOI4World\FocusTrees\AdjustedBranches.h" />
     <ClInclude Include="src\HOI4World\Ideologies\IdeologiesBuilder.h" />
     <ClInclude Include="src\HOI4World\Ideologies\IdeologyBuilder.h" />
     <ClInclude Include="src\HOI4World\IntelligenceAgencies\IntelligenceAgencies.h" />
@@ -506,6 +526,7 @@
     <ClInclude Include="src\HOI4World\Map\CoastalProvincesBuilder.h" />
     <ClInclude Include="src\HOI4World\Map\HoI4ProvinceDefinitionImporter.h" />
     <ClInclude Include="src\HOI4World\Map\HoI4Provinces.h" />
+    <ClInclude Include="src\HOI4World\Map\PathPoint.h" />
     <ClInclude Include="src\HOI4World\Map\Railway.h" />
     <ClInclude Include="src\HOI4World\Map\Railways.h" />
     <ClInclude Include="src\HOI4World\Map\StrategicRegions.h" />
@@ -532,6 +553,13 @@
     <ClInclude Include="src\HOI4World\OperativeNames\OperativeNamesSetDetails.h" />
     <ClInclude Include="src\HOI4World\OperativeNames\OperativeNamesSetFactory.h" />
     <ClInclude Include="src\HOI4World\Operatives\Operative.h" />
+    <ClInclude Include="src\HOI4World\PeaceConferences\DynamicAiPeaces.h" />
+    <ClInclude Include="src\HOI4World\PeaceConferences\IdeologicalAiPeace.h" />
+    <ClInclude Include="src\HOI4World\PeaceConferences\IdeologicalCostModifiers.h" />
+    <ClInclude Include="src\HOI4World\PlaneDesigns\PlaneDesign.h" />
+    <ClInclude Include="src\HOI4World\PlaneDesigns\PlaneDesigns.h" />
+    <ClInclude Include="src\HOI4World\PlaneDesigns\PlaneModules.h" />
+    <ClInclude Include="src\HOI4World\PlaneDesigns\PossiblePlaneDesigns.h" />
     <ClInclude Include="src\HOI4World\Regions\Region.h" />
     <ClInclude Include="src\HOI4World\Regions\RegionFactory.h" />
     <ClInclude Include="src\HOI4World\Regions\Regions.h" />
@@ -561,6 +589,7 @@
     <ClInclude Include="src\HOI4World\TankDesigns\TankModules.h" />
     <ClInclude Include="src\HOI4World\TankDesigns\TankUpgrades.h" />
     <ClInclude Include="src\HOI4World\TechnologiesBuilder.h" />
+    <ClInclude Include="src\HOI4World\UnitMedals\IdeologicalUnitMedals.h" />
     <ClInclude Include="src\HOI4World\WarCreator\MapUtils.h" />
     <ClInclude Include="src\Mappers\CasusBelli\CasusBelliMapping.h" />
     <ClInclude Include="src\Mappers\CasusBelli\CasusBelliMappingFactory.h" />
@@ -620,6 +649,8 @@
     <ClInclude Include="src\OutHoi4\Characters\OutCharacter.h" />
     <ClInclude Include="src\OutHoi4\Characters\OutCommanderData.h" />
     <ClInclude Include="src\OutHoi4\Characters\OutPortrait.h" />
+    <ClInclude Include="src\OutHoi4\Countries\OutEquipment.h" />
+    <ClInclude Include="src\OutHoi4\Countries\OutUnionCountry.h" />
     <ClInclude Include="src\OutHoi4\CountryCategories\OutCountryCategories.h" />
     <ClInclude Include="src\OutHoi4\CountryCategories\OutCountryCategory.h" />
     <ClInclude Include="src\OutHoi4\Decisions\OutDecision.h" />
@@ -627,8 +658,6 @@
     <ClInclude Include="src\OutHoi4\Decisions\OutDecisionsCategory.h" />
     <ClInclude Include="src\OutHoi4\Decisions\OutDecisionsInCategory.h" />
     <ClInclude Include="src\OutHoi4\Decisions\OutDecisions.h" />
-    <ClInclude Include="src\OutHoi4\Diplomacy\OutAiPeace.h" />
-    <ClInclude Include="src\OutHoi4\Diplomacy\OutAiPeaces.h" />
     <ClInclude Include="src\OutHoi4\Diplomacy\OutWar.h" />
     <ClInclude Include="src\OutHoi4\Events\OutEventOption.h" />
     <ClInclude Include="src\OutHoi4\Events\OutEvent.h" />
@@ -688,6 +717,11 @@
     <ClInclude Include="src\OutHoi4\OutOnActions.h" />
     <ClInclude Include="src\OutHoI4\OutSharedFocus.h" />
     <ClInclude Include="src\OutHoi4\OutTechnologies.h" />
+    <ClInclude Include="src\OutHoi4\PeaceConference\OutAiPeace.h" />
+    <ClInclude Include="src\OutHoi4\PeaceConference\OutCostModifiers.h" />
+    <ClInclude Include="src\OutHoi4\PlaneDesigns\OutPlaneDesign.h" />
+    <ClInclude Include="src\OutHoi4\PlaneDesigns\OutPlaneDesigns.h" />
+    <ClInclude Include="src\OutHoi4\PlaneDesigns\OutPlaneModules.h" />
     <ClInclude Include="src\OutHoi4\ScriptedEffects\OutScriptedEffect.h" />
     <ClInclude Include="src\OutHoi4\ScriptedEffects\OutScriptedEffects.h" />
     <ClInclude Include="src\OutHoi4\ScriptedLocalisations\OutScriptedLocalisation.h" />
@@ -713,9 +747,6 @@
     <ClInclude Include="src\HOI4World\Decisions\PoliticalDecisions.h" />
     <ClInclude Include="src\HOI4World\Decisions\ResourceProspectingDecisions.h" />
     <ClInclude Include="src\HOI4World\Decisions\StabilityWarSupportDecisions.h" />
-    <ClInclude Include="src\HOI4World\Diplomacy\AIPeace.h" />
-    <ClInclude Include="src\HOI4World\Diplomacy\AIPeaces.h" />
-    <ClInclude Include="src\HOI4World\Diplomacy\AiPeacesUpdater.h" />
     <ClInclude Include="src\HOI4World\Diplomacy\Faction.h" />
     <ClInclude Include="src\HOI4World\Diplomacy\HoI4Relations.h" />
     <ClInclude Include="src\HOI4World\Diplomacy\HoI4War.h" />
@@ -821,18 +852,19 @@
     <ClInclude Include="src\OutHoi4\TankDesigns\OutTankDesigns.h" />
     <ClInclude Include="src\OutHoi4\TankDesigns\OutTankModules.h" />
     <ClInclude Include="src\OutHoi4\TankDesigns\OutTankUpgrades.h" />
+    <ClInclude Include="src\OutHoi4\UnitMedals\OutUnitMedals.h" />
     <ClInclude Include="src\V2World\Ai\AIStrategyFactory.h" />
     <ClInclude Include="src\V2World\Ai\AIFactory.h" />
     <ClInclude Include="src\V2World\Countries\CommonCountriesDataFactory.h" />
     <ClInclude Include="src\V2World\Ai\AIStrategy.h" />
     <ClInclude Include="src\V2World\Ai\AI.h" />
     <ClInclude Include="src\V2World\Countries\CommonCountryData.h" />
-    <ClInclude Include="src\V2World\Countries\CommonCountryDataBuilder.h" />
     <ClInclude Include="src\V2World\Countries\CommonCountryDataFactory.h" />
     <ClInclude Include="src\V2World\Countries\Country.h" />
     <ClInclude Include="src\V2World\Countries\CountryBuilder.h" />
     <ClInclude Include="src\V2World\Countries\CountryFactory.h" />
     <ClInclude Include="src\V2World\Countries\UnitNamesFactory.h" />
+    <ClInclude Include="src\V2World\Culture\CultureGroup.h" />
     <ClInclude Include="src\V2World\Culture\CultureGroupFactory.h" />
     <ClInclude Include="src\V2World\Culture\CultureGroups.h" />
     <ClInclude Include="src\V2World\Culture\CultureGroupsFactory.h" />
@@ -957,7 +989,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Release\**\*.*">
+    <Content Include="external\Fronter.NET\Release\**\*.*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <DeploymentContent>true</DeploymentContent>
       <Link>..\%(RecursiveDir)\%(Filename)%(Extension)</Link>
@@ -988,6 +1020,8 @@
     <Text Include="data\configurables\CountryNamesMappings.txt" />
     <Text Include="data\configurables\country_mappings.txt" />
     <Text Include="data\configurables\cultureGroupToGraphics.txt" />
+    <Text Include="data\configurables\CustomizedFocusBranches\FRA_begin_rearmament_characters.txt" />
+    <Text Include="data\configurables\CustomizedFocusBranches\FRA_begin_rearmament.txt" />
     <Text Include="data\configurables\CustomizedFocusBranches\uk_colonial_focus.txt" />
     <Text Include="data\configurables\factions_mappings.txt" />
     <Text Include="data\configurables\FlagsToIdeasMappings.txt" />
@@ -1000,6 +1034,7 @@
     <Text Include="data\configurables\ideologicalAdvisors.txt" />
     <Text Include="data\configurables\ideologicalDecisions.txt" />
     <Text Include="data\configurables\ideologicalIdeas.txt" />
+    <Text Include="data\configurables\ideological_unit_medals.txt" />
     <Text Include="data\configurables\IdeologyMappings.txt" />
     <Text Include="data\configurables\ImportCharacters.txt" />
     <Text Include="data\configurables\IntelligenceAgencyLogos.txt" />

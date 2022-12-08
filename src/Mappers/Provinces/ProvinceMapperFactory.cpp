@@ -1,13 +1,14 @@
-#include "ProvinceMapperFactory.h"
-#include "CommonRegexes.h"
-#include "Configuration.h"
-#include "GameVersion.h"
-#include "Log.h"
-#include "OSCompatibilityLayer.h"
-#include "ParserHelpers.h"
-#include "ProvinceMapper.h"
-#include "VersionedMappings.h"
+#include "src/Mappers/Provinces/ProvinceMapperFactory.h"
+#include "external/common_items/CommonRegexes.h"
+#include "external/common_items/GameVersion.h"
+#include "external/common_items/Log.h"
+#include "external/common_items/OSCompatibilityLayer.h"
+#include "external/common_items/ParserHelpers.h"
+#include "src/Configuration.h"
+#include "src/Mappers/Provinces/ProvinceMapper.h"
+#include "src/Mappers/Provinces/VersionedMappings.h"
 #include <fstream>
+#include <ranges>
 
 
 
@@ -96,7 +97,7 @@ std::unique_ptr<Mappers::ProvinceMapper> Mappers::ProvinceMapper::Factory::impor
 	provinceMapper = std::make_unique<ProvinceMapper>();
 
 	auto mapped = false;
-	for (const auto& mod: theConfiguration.getVic2Mods())
+	for (const auto& mod: theConfiguration.getVic2Mods() | std::views::reverse)
 	{
 		if (commonItems::DoesFileExist(mod.path + "/hybridization.txt"))
 		{

@@ -3,41 +3,43 @@
 
 
 
-#include "Color.h"
-#include "Date.h"
-#include "Diplomacy/Faction.h"
-#include "Diplomacy/HoI4AIStrategy.h"
-#include "Diplomacy/HoI4Relations.h"
-#include "Diplomacy/HoI4War.h"
-#include "HOI4World/Characters/Character.h"
-#include "HoI4FocusTree.h"
-#include "Ideologies/Ideologies.h"
-#include "Map/CoastalProvinces.h"
-#include "Mappers/Country/CountryMapper.h"
-#include "Mappers/FlagsToIdeas/FlagsToIdeasMapper.h"
-#include "Mappers/Government/GovernmentMapper.h"
-#include "Mappers/Graphics/GraphicsMapper.h"
-#include "Mappers/Ideology/IdeologyMapper.h"
-#include "Mappers/Provinces/ProvinceMapper.h"
-#include "Mappers/Technology/TechMapper.h"
-#include "Maps/ProvinceDefinitions.h"
-#include "Military/Airplane.h"
-#include "Military/HoI4Army.h"
-#include "MilitaryMappings/MtgUnitMappings.h"
-#include "MilitaryMappings/UnitMappings.h"
-#include "Names/Names.h"
-#include "Navies/Navies.h"
-#include "Navies/NavyNames.h"
-#include "Operatives/Operative.h"
-#include "Regions/Regions.h"
-#include "ShipTypes/ShipVariants.h"
-#include "States/HoI4State.h"
-#include "TankDesigns/TankDesigns.h"
-#include "Technologies.h"
-#include "V2World/Countries/Country.h"
-#include "V2World/Localisations/Vic2Localisations.h"
-#include "V2World/Politics/Party.h"
-#include "V2World/World/World.h"
+#include "external/common_items/Color.h"
+#include "external/common_items/Date.h"
+#include "src/HOI4World/Characters/Character.h"
+#include "src/HOI4World/Countries/Equipment.h"
+#include "src/HOI4World/Diplomacy/Faction.h"
+#include "src/HOI4World/Diplomacy/HoI4AIStrategy.h"
+#include "src/HOI4World/Diplomacy/HoI4Relations.h"
+#include "src/HOI4World/Diplomacy/HoI4War.h"
+#include "src/HOI4World/HoI4FocusTree.h"
+#include "src/HOI4World/Ideologies/Ideologies.h"
+#include "src/HOI4World/Map/CoastalProvinces.h"
+#include "src/HOI4World/Military/Airplane.h"
+#include "src/HOI4World/Military/HoI4Army.h"
+#include "src/HOI4World/MilitaryMappings/MtgUnitMappings.h"
+#include "src/HOI4World/MilitaryMappings/UnitMappings.h"
+#include "src/HOI4World/Names/Names.h"
+#include "src/HOI4World/Navies/Navies.h"
+#include "src/HOI4World/Navies/NavyNames.h"
+#include "src/HOI4World/Operatives/Operative.h"
+#include "src/HOI4World/PlaneDesigns/PlaneDesigns.h"
+#include "src/HOI4World/Regions/Regions.h"
+#include "src/HOI4World/ShipTypes/ShipVariants.h"
+#include "src/HOI4World/States/HoI4State.h"
+#include "src/HOI4World/TankDesigns/TankDesigns.h"
+#include "src/HOI4World/Technologies.h"
+#include "src/Mappers/Country/CountryMapper.h"
+#include "src/Mappers/FlagsToIdeas/FlagsToIdeasMapper.h"
+#include "src/Mappers/Government/GovernmentMapper.h"
+#include "src/Mappers/Graphics/GraphicsMapper.h"
+#include "src/Mappers/Ideology/IdeologyMapper.h"
+#include "src/Mappers/Provinces/ProvinceMapper.h"
+#include "src/Mappers/Technology/TechMapper.h"
+#include "src/Maps/ProvinceDefinitions.h"
+#include "src/V2World/Countries/Country.h"
+#include "src/V2World/Localisations/Vic2Localisations.h"
+#include "src/V2World/Politics/Party.h"
+#include "src/V2World/World/World.h"
 #include <map>
 #include <memory>
 #include <optional>
@@ -123,9 +125,11 @@ class Country
 		 const HoI4::States& theStates,
 		 const Mappers::ProvinceMapper& provinceMapper,
 		 const Configuration& theConfiguration);
+	void AddPlaneDesigns(const PossiblePlaneDesigns& possible_designs);
 	void addTankDesigns(const PossibleTankDesigns& possibleDesigns);
 	void convertTechnology(const Mappers::TechMapper& techMapper, const Mappers::ResearchBonusMapper& theTechMapper);
 	void addState(const State& state);
+	void removeState(const State& state);
 	void addCoreState(const int stateId) { coreStates.insert(stateId); }
 	void addClaimedState(const int stateId) { claimedStates.insert(stateId); }
 	void calculateIndustry(const std::map<int, State>& allStates);
@@ -134,10 +138,11 @@ class Country
 		 const Regions& theRegions);
 	void addEmptyFocusTree();
 	void addGenericFocusTree(const std::set<std::string>& majorIdeologies);
-	void addPuppetsIntegrationTree(HoI4::Localisation& hoi4Localisations);
+	void addPuppetsIntegrationTree(HoI4::Localisation& hoi4Localisations, bool debug);
 	void addFocusTreeBranch(const std::string& branch, OnActions& onActions);
 	void adjustResearchFocuses() const;
 
+	void SetUnionCountryTag(const std::string& union_country_tag) { union_country_tag_ = union_country_tag; }
 	void setSphereLeader(const std::string& SphereLeader) { sphereLeader = SphereLeader; }
 	void setFaction(const std::shared_ptr<const Faction>& newFaction) { faction = newFaction; }
 	void giveNationalFocus(std::unique_ptr<HoI4FocusTree>& NF) { nationalFocus = std::move(NF); }
@@ -153,10 +158,20 @@ class Country
 
 	void addUnbuiltCanal(const std::string& unbuiltCanal) { unbuiltCanals.push_back(unbuiltCanal); }
 
-	void addProvincesToHomeArea(int provinceId,
-		 const std::unique_ptr<Maps::MapData>& theMapData,
-		 const std::map<int, HoI4::State>& states,
+	std::vector<std::set<int>> getDominionAreas(const std::unique_ptr<Maps::MapData>& theMapData,
+		 const std::map<int, HoI4::State>& allStates,
 		 const std::map<int, int>& provinceToStateIdMap);
+	void addProvincesToArea(int startingProvince,
+		 std::set<int>& area,
+		 const std::unique_ptr<Maps::MapData>& theMapData,
+		 const std::map<int, HoI4::State>& allStates,
+		 const std::map<int, int>& provinceToStateIdMap);
+	bool isProvinceInDominionArea(int province, const std::vector<std::set<int>>& dominionAreas);
+	bool isProvinceInCapitalArea(int province, const std::vector<std::set<int>>& dominionAreas) const
+	{
+		return dominionAreas[0].contains(province);
+	}
+	void setFlag(const std::string& flag) { flags.insert(flag); }
 
 	[[nodiscard]] std::optional<HoI4::Relations> getRelations(const std::string& withWhom) const;
 	[[nodiscard]] std::optional<date> getTruceUntil(const std::string& withWhom) const;
@@ -168,9 +183,11 @@ class Country
 	[[nodiscard]] std::optional<Faction> getFaction() const;
 	[[nodiscard]] std::optional<HoI4FocusTree> getNationalFocus() const;
 	[[nodiscard]] bool hasMonarchIdea() const;
+	[[nodiscard]] float GetResourcesMultiplier() const;
 
 	[[nodiscard]] const std::string& getTag() const { return tag; }
 	[[nodiscard]] const auto& getOldTag() const { return oldTag; }
+	[[nodiscard]] const auto& GetUnionCountryTag() const { return union_country_tag_; }
 	[[nodiscard]] const auto& getName() const { return name_; }
 	[[nodiscard]] const std::string& getFilename() const { return filename; }
 	[[nodiscard]] const std::string& getCommonCountryFile() const { return commonCountryFile; }
@@ -204,6 +221,7 @@ class Country
 
 	[[nodiscard]] bool hasProvinces() const { return !provinces.empty(); }
 	[[nodiscard]] const std::set<int>& getProvinces() const { return provinces; }
+	[[nodiscard]] const int& getNationalPopulation() const { return nationalPopulation; }
 	[[nodiscard]] const std::set<int>& getStates() const { return states; }
 	[[nodiscard]] std::optional<int> getCapitalState() const { return capitalState; }
 	[[nodiscard]] std::optional<int> getCapitalProvince() const { return capitalProvince; }
@@ -246,6 +264,7 @@ class Country
 
 	[[nodiscard]] const Army& getArmy() const { return theArmy; }
 	[[nodiscard]] const auto& getDivisionLocations() const { return theArmy.getDivisionLocations(); }
+	[[nodiscard]] const PlaneDesigns& GetPlaneDesigns() const { return *plane_designs_; }
 	[[nodiscard]] const TankDesigns& getTankDesigns() const { return *tankDesigns; }
 	[[nodiscard]] const ShipVariants& getTheShipVariants() const { return *theShipVariants; }
 	[[nodiscard]] std::optional<Navies> getNavies() const;
@@ -253,7 +272,7 @@ class Country
 	[[nodiscard]] int getConvoys() const { return convoys; }
 	[[nodiscard]] auto getTrainsMultiplier() const { return trainsMultiplier; }
 	[[nodiscard]] const std::vector<Airplane>& getPlanes() const { return planes; }
-	[[nodiscard]] const std::map<std::string, unsigned int>& getEquipmentStockpile() const { return equipmentStockpile; }
+	[[nodiscard]] const std::vector<Equipment>& GetEquipmentStockpile() const { return equipment_stockpile_; }
 
 	[[nodiscard]] const auto& getOperatives() const { return operatives_; }
 
@@ -299,6 +318,7 @@ class Country
 	[[nodiscard]] const bool isEligibleEnemy(std::string target) const;
 
 	void convertWars(const Vic2::Country& sourceCountry,
+		 const std::set<std::string>& independentCountries,
 		 const Mappers::CountryMapper& countryMap,
 		 const Mappers::CasusBellis& casusBellis,
 		 const Mappers::ProvinceMapper& provinceMapper,
@@ -311,7 +331,6 @@ class Country
 	void setTrainsMultiplier(float multiplier) { trainsMultiplier = multiplier; }
 
 	[[nodiscard]] const auto& getGlobalEventTargets() const { return globalEventTargets; }
-	[[nodiscard]] bool isProvinceInHomeArea(int provinceId) const { return homeAreaProvinces.contains(provinceId); }
 
 	void convertStrategies(const Mappers::CountryMapper& countryMap,
 		 const Vic2::Country& sourceCountry,
@@ -328,6 +347,7 @@ class Country
 	void convertLaws();
 	void convertLeaders(const Vic2::Country& sourceCountry,
 		 Character::Factory& characterFactory,
+		 const Mappers::GraphicsMapper& graphics_mapper,
 		 Localisation& localisation);
 	void convertMonarch(const std::string& lastMonarch);
 	void convertMonarchIdea(const Mappers::GraphicsMapper& graphicsMapper,
@@ -362,6 +382,7 @@ class Country
 
 	std::string tag;
 	std::string oldTag;
+	std::optional<std::string> union_country_tag_;
 	std::optional<std::string> name_;
 	std::optional<std::string> adjective_;
 	std::string filename;
@@ -401,6 +422,7 @@ class Country
 	int oldCapital;
 	std::set<int> coreStates;
 	std::set<int> claimedStates;
+	int nationalPopulation = 0;
 
 	std::string oldGovernment;
 	std::string governmentIdeology = "neutrality";
@@ -434,6 +456,7 @@ class Country
 	std::vector<Vic2::Army> oldArmies;
 	Army theArmy;
 	std::shared_ptr<Country> puppetMaster;
+	std::unique_ptr<PlaneDesigns> plane_designs_;
 	std::unique_ptr<TankDesigns> tankDesigns;
 	std::unique_ptr<ShipVariants> theShipVariants;
 	std::unique_ptr<Navies> theNavies;
@@ -441,7 +464,7 @@ class Country
 	int convoys = 0;
 	std::optional<float> trainsMultiplier;
 	std::vector<Airplane> planes;
-	std::map<std::string, unsigned int> equipmentStockpile;
+	std::vector<Equipment> equipment_stockpile_;
 	std::map<std::string, std::vector<std::string>> shipNames;
 
 	std::vector<Operative> operatives_;
@@ -472,7 +495,6 @@ class Country
 
 	std::map<std::string, float> sourceCountryGoods;
 	std::set<std::string> globalEventTargets;
-	std::set<int> homeAreaProvinces;
 
 	std::vector<std::string> unbuiltCanals;
 

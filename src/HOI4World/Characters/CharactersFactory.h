@@ -3,10 +3,10 @@
 
 
 
-#include "HOI4World/Characters/Character.h"
-#include "HOI4World/Characters/CharacterFactory.h"
-#include "HOI4World/Characters/CharactersCountryFactory.h"
-#include "Parser.h"
+#include "external/common_items/ConvenientParser.h"
+#include "src/HOI4World/Characters/Character.h"
+#include "src/HOI4World/Characters/CharacterFactory.h"
+#include "src/HOI4World/Characters/CharactersCountryFactory.h"
 #include <map>
 #include <string>
 
@@ -20,7 +20,7 @@ class CharactersFactory: commonItems::parser
   public:
 	explicit CharactersFactory(Character::Factory& characterFactory);
 
-	std::multimap<std::string, Character> importCharacters();
+	std::multimap<std::string, Character> importCharacters(std::string_view filename);
 
   private:
 	std::multimap<std::string, Character> characters_;

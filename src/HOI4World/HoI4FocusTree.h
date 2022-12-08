@@ -3,12 +3,12 @@
 
 
 
-#include "Date.h"
-#include "Diplomacy/HoI4AIStrategy.h"
-#include "Events/Events.h"
-#include "OnActions.h"
-#include "Parser.h"
-#include "States/HoI4State.h"
+#include "external/common_items/ConvenientParser.h"
+#include "external/common_items/Date.h"
+#include "src/HOI4World/Diplomacy/HoI4AIStrategy.h"
+#include "src/HOI4World/Events/Events.h"
+#include "src/HOI4World/OnActions.h"
+#include "src/HOI4World/States/HoI4State.h"
 #include <memory>
 #include <set>
 #include <string>
@@ -51,30 +51,36 @@ class HoI4FocusTree: commonItems::parser
 
 	void addDemocracyNationalFocuses(const HoI4::Country& home,
 		 const std::vector<std::shared_ptr<HoI4::Country>>& CountriesToContain,
-		 HoI4::Localisation& hoi4Localisations);
+		 HoI4::Localisation& hoi4Localisations,
+		 bool debug);
 	void addAbsolutistEmpireNationalFocuses(const HoI4::Country& home,
 		 const std::vector<std::shared_ptr<HoI4::Country>>& targetColonies,
 		 const std::vector<std::shared_ptr<HoI4::Country>>& annexationTargets,
-		 HoI4::Localisation& hoi4Localisations);
+		 HoI4::Localisation& hoi4Localisations,
+		 bool debug);
 	void addCommunistCoupBranch(const HoI4::Country& home,
 		 const std::vector<std::shared_ptr<HoI4::Country>>& coupTargets,
 		 const std::set<std::string>& majorIdeologies,
-		 HoI4::Localisation& hoi4Localisations);
+		 HoI4::Localisation& hoi4Localisations,
+		 bool debug);
 	void addCommunistWarBranch(const HoI4::Country& home,
 		 std::vector<std::shared_ptr<HoI4::Country>> warTargets,
 		 HoI4::Events& events,
-		 HoI4::Localisation& hoi4Localisations);
+		 HoI4::Localisation& hoi4Localisations,
+		 bool debug);
 	void addFascistAnnexationBranch(const HoI4::Country& home,
 		 const std::vector<std::shared_ptr<HoI4::Country>>& annexationTargets,
 		 const size_t numSudetenTargets,
 		 HoI4::Events& events,
-		 HoI4::Localisation& hoi4Localisations);
+		 HoI4::Localisation& hoi4Localisations,
+		 bool debug);
 	void addFascistSudetenBranch(const HoI4::Country& home,
 		 const std::vector<std::shared_ptr<HoI4::Country>>& anschlussTargets,
 		 const std::vector<std::shared_ptr<HoI4::Country>>& sudetenTargets,
 		 const std::map<std::string, std::vector<int>>& demandedStates,
 		 HoI4::Events& events,
-		 HoI4::Localisation& hoi4Localisations);
+		 HoI4::Localisation& hoi4Localisations,
+		 bool debug);
 	void addGPWarBranch(const HoI4::Country& home,
 		 const std::vector<std::shared_ptr<HoI4::Country>>& newAllies,
 		 const std::vector<std::shared_ptr<HoI4::Country>>& GCTargets,
@@ -82,21 +88,25 @@ class HoI4FocusTree: commonItems::parser
 		 const std::set<std::string>& majorIdeologies,
 		 HoI4::Events& events,
 		 Mappers::FactionNameMapper& factionNameMapper,
-		 HoI4::Localisation& hoi4Localisations);
+		 HoI4::Localisation& hoi4Localisations,
+		 bool debug);
 	std::map<std::string, std::set<int>> addReconquestBranch(const HoI4::Country& theCountry,
 		 int& numWarsWithNeighbors,
 		 const std::set<std::string>& majorIdeologies,
 		 const std::map<int, HoI4::State>& states,
-		 HoI4::Localisation& hoi4Localisations);
+		 HoI4::Localisation& hoi4Localisations,
+		 bool debug);
 	std::set<std::string> addConquerBranch(const HoI4::Country& theCountry,
 		 int& numWarsWithNeighbors,
 		 const std::set<std::string>& majorIdeologies,
 		 const std::map<std::string, std::set<int>>& coreHolders,
 		 const std::map<int, HoI4::State>& states,
-		 HoI4::Localisation& hoi4Localisations);
+		 HoI4::Localisation& hoi4Localisations,
+		 bool debug);
 	void addIntegratePuppetsBranch(const std::string& tag,
 		 const std::map<std::string, std::string>& puppets,
-		 HoI4::Localisation& hoi4Localisations);
+		 HoI4::Localisation& hoi4Localisations,
+		 bool debug);
 	void removeFocus(const std::string& id);
 	void makeEmpty() { emptyFocusTree = true; }
 

@@ -1,4 +1,5 @@
-#include "FactionNameMapper.h"
+#include "src/Mappers/FactionName/FactionNameMapper.h"
+#include <algorithm>
 
 
 

@@ -1,7 +1,7 @@
-#include "HOI4World/Characters/CharacterFactory.h"
-#include "HOI4World/Characters/Portrait.h"
-#include "gmock/gmock-matchers.h"
-#include "gtest/gtest.h"
+#include "external/googletest/googlemock/include/gmock/gmock-matchers.h"
+#include "external/googletest/googletest/include/gtest/gtest.h"
+#include "src/HOI4World/Characters/CharacterFactory.h"
+#include "src/HOI4World/Characters/Portrait.h"
 
 
 
@@ -78,6 +78,7 @@ TEST(HoI4World_Characters_CharacterFactory, ItemsAreSetWhenImportingCharacter)
 	ASSERT_TRUE(character.getAdvisorData().has_value());
 	EXPECT_EQ(character.getAdvisorData()->getSlot(), "political_advisor");
 	EXPECT_EQ(character.getAdvisorData()->getIdeaToken(), "thomas_kinkaid");
+	ASSERT_TRUE(character.getAdvisorData()->getAllowed().has_value());
 	EXPECT_EQ(character.getAdvisorData()->getAllowed(),
 		 "{\n"
 		 "\t\t\t\toriginal_tag = USA\n"

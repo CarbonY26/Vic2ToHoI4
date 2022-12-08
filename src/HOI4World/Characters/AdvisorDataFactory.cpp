@@ -1,6 +1,6 @@
-#include "AdvisorDataFactory.h"
-#include "CommonRegexes.h"
-#include "ParserHelpers.h"
+#include "src/HOI4World/Characters/AdvisorDataFactory.h"
+#include "external/common_items/CommonRegexes.h"
+#include "external/common_items/ParserHelpers.h"
 
 
 
@@ -54,7 +54,7 @@ HoI4::AdvisorData HoI4::AdvisorDataFactory::importAdvisorData(std::istream& inpu
 	idea_token_.clear();
 	ledger_.reset();
 	available_.reset();
-	allowed_.clear();
+	allowed_.reset();
 	visible_.reset();
 	research_bonus_.reset();
 	traits_.clear();

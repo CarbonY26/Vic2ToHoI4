@@ -1,6 +1,6 @@
-#include "DynamicModifiers.h"
-#include "Log.h"
-#include "Modifier.h"
+#include "src/HOI4World/Modifiers/DynamicModifiers.h"
+#include "external/common_items/Log.h"
+#include "src/HOI4World/Modifiers/Modifier.h"
 
 
 
@@ -11,7 +11,7 @@ HoI4::DynamicModifiers::DynamicModifiers()
 		Modifier modifier(modifierName, theStream);
 		dynamicModifiers.insert(make_pair(modifierName, modifier));
 	});
-	parseFile("configurables/converterDynamicModifiers.txt");
+	parseFile("Configurables/converterDynamicModifiers.txt");
 	clearRegisteredKeywords();
 }
 

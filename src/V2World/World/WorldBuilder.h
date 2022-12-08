@@ -3,7 +3,7 @@
 
 
 
-#include "World.h"
+#include "src/V2World/World/World.h"
 #include <memory>
 
 
@@ -21,6 +21,12 @@ class World::Builder
 	Builder& addCountry(const std::string& tag, Country country)
 	{
 		world->countries.emplace(tag, std::move(country));
+		return *this;
+	}
+
+	Builder& AddUnion(const std::string& tag, Country country)
+	{
+		world->union_countries_.emplace(tag, std::move(country));
 		return *this;
 	}
 

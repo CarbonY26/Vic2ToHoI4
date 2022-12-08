@@ -1,10 +1,10 @@
-#include "Mappers/Country/CountryMapper.h"
-#include "Mappers/Country/CountryMapperBuilder.h"
-#include "Mappers/Country/CountryMapperFactory.h"
-#include "V2World/Countries/CountryBuilder.h"
-#include "V2World/World/WorldBuilder.h"
-#include "gmock/gmock-matchers.h"
-#include "gtest/gtest.h"
+#include "external/googletest/googlemock/include/gmock/gmock-matchers.h"
+#include "external/googletest/googletest/include/gtest/gtest.h"
+#include "src/Mappers/Country/CountryMapper.h"
+#include "src/Mappers/Country/CountryMapperBuilder.h"
+#include "src/Mappers/Country/CountryMapperFactory.h"
+#include "src/V2World/Countries/CountryBuilder.h"
+#include "src/V2World/World/WorldBuilder.h"
 
 
 
@@ -28,6 +28,16 @@ TEST(Mappers_Country_CountryMapperTests, MappingCanBeGivenFromRule)
 {
 	const auto mapper = Mappers::CountryMapper::Factory().importCountryMapper(
 		 *Vic2::World::Builder().addCountry("AAA", *Vic2::Country::Builder().Build()).Build(),
+		 false);
+
+	ASSERT_EQ("HOI", mapper->getHoI4Tag("AAA"));
+}
+
+
+TEST(Mappers_Country_CountryMapperTests, UnionsAreValidForMappings)
+{
+	const auto mapper = Mappers::CountryMapper::Factory().importCountryMapper(
+		 *Vic2::World::Builder().AddUnion("AAA", *Vic2::Country::Builder().Build()).Build(),
 		 false);
 
 	ASSERT_EQ("HOI", mapper->getHoI4Tag("AAA"));

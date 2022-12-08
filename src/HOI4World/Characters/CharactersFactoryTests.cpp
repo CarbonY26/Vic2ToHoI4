@@ -1,6 +1,6 @@
-#include "HOI4World/Characters/CharactersFactory.h"
-#include "gmock/gmock-matchers.h"
-#include "gtest/gtest.h"
+#include "external/googletest/googlemock/include/gmock/gmock-matchers.h"
+#include "external/googletest/googletest/include/gtest/gtest.h"
+#include "src/HOI4World/Characters/CharactersFactory.h"
 #include <sstream>
 
 
@@ -10,7 +10,7 @@ TEST(HoI4World_Characters_CharactersFactory, CharactersCanBeImported)
 	HoI4::Character::Factory characterFactory;
 	HoI4::CharactersFactory charactersFactory(characterFactory);
 
-	const auto characters = charactersFactory.importCharacters();
+	const auto characters = charactersFactory.importCharacters("Configurables/ImportCharacters.txt");
 
 	std::stringstream empty_character_input;
 	EXPECT_THAT(characters,

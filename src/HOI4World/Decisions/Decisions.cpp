@@ -1,6 +1,6 @@
-#include "Decisions.h"
-#include "HOI4World/Events/Events.h"
-#include "Log.h"
+#include "src/HOI4World/Decisions/Decisions.h"
+#include "external/common_items/Log.h"
+#include "src/HOI4World/Events/Events.h"
 #include <regex>
 
 
@@ -13,8 +13,7 @@ HoI4::decisions::decisions(const Configuration& theConfiguration)
 		 theConfiguration.getHoI4Path() + "/common/decisions/lar_agent_recruitment_decisions.txt");
 	stabilityDecisions.importDecisions(theConfiguration.getHoI4Path() + "/common/decisions/stability_war_support.txt");
 	politicalDecisions.importDecisions("Configurables/ideologicalDecisions.txt");
-	exiledGovernmentsDecisions.importDecisions(
-		 theConfiguration.getHoI4Path() + "/common/decisions/_exiled_governments_decisions.txt");
+	exiledGovernmentsDecisions.importDecisions("blankmod/common/decisions/_exiled_governments_decisions.txt");
 	foreignInfluenceDecisions.importDecisions(
 		 theConfiguration.getHoI4Path() + "/common/decisions/foreign_influence.txt");
 	foreignInfluenceDecisions.importDecisions("Configurables/foreignInfluenceDecisions.txt");

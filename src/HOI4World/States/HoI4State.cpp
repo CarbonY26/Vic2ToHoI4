@@ -1,9 +1,10 @@
-#include "HoI4State.h"
-#include "HOI4World/Map/CoastalProvinces.h"
-#include "Log.h"
-#include "StateCategories.h"
-#include "V2World/Provinces/Province.h"
-#include "V2World/States/State.h"
+#include "src/HOI4World/States/HoI4State.h"
+#include "external/common_items/Log.h"
+#include "src/HOI4World/Map/CoastalProvinces.h"
+#include "src/HOI4World/States/StateCategories.h"
+#include "src/V2World/Provinces/Province.h"
+#include "src/V2World/States/State.h"
+#include <cmath>
 #include <ranges>
 
 
@@ -171,7 +172,6 @@ void HoI4::State::removeControlledProvince(int provinceNum)
 		controlledProvinces.erase(provinceNum);
 	}
 }
-
 
 void HoI4::State::setControlledProvince(int provinceNum, const std::string& country)
 {
@@ -352,7 +352,7 @@ void HoI4::State::convertIndustry(double workerFactoryRatio,
 int HoI4::State::determineFactoryNumbers(double workerFactoryRatio, int ownerIndustryRemainder)
 {
 	double rawFactories = employedWorkers * workerFactoryRatio;
-	rawFactories = round(rawFactories);
+	rawFactories = std::round(rawFactories);
 	return constrainFactoryNumbers(rawFactories + ownerIndustryRemainder);
 }
 
@@ -404,27 +404,46 @@ void HoI4::State::determineCategory(int factories, const HoI4::StateCategories& 
 
 void HoI4::State::addInfrastructureFromRails(float averageRailLevels)
 {
-	infrastructure += averageRailLevels / 2;
+	infrastructure += averageRailLevels / 3;
 }
-
 
 void HoI4::State::addInfrastructureFromFactories(int factories)
 {
 	if (factories >= FIRST_INFRASTRUCTURE_REWARD_LEVEL)
 	{
-		infrastructure += 0.75F;
+		infrastructure += 0.5F;
 	}
 	if (factories >= SECOND_INFRASTRUCTURE_REWARD_LEVEL)
 	{
-		infrastructure += 0.75F;
+		infrastructure += 0.5F;
 	}
 	if (factories >= THIRD_INFRASTRUCTURE_REWARD_LEVEL)
 	{
-		infrastructure += 0.75F;
+		infrastructure += 0.5F;
 	}
-	infrastructure = std::clamp(infrastructure, 0.0F, 5.0F);
 }
-
+void HoI4::State::finishInfrastructureConversion()
+{
+	// clamp infrastrucutre from previous additions (Railway levels and Factories)
+	infrastructure = std::clamp(infrastructure, 1.0F, 3.0F);
+	if (ownerAvrgPopPerProvince.has_value())
+	{
+		if (avrgPopPerProvince > ownerAvrgPopPerProvince.value() * 1.2)
+		{
+			infrastructure++;
+		}
+		else if (avrgPopPerProvince < ownerAvrgPopPerProvince.value() * 0.6)
+		{
+			infrastructure--;
+		}
+	}
+	if (capitalState)
+	{
+		infrastructure++;
+	}
+	// Final Clamp for safety
+	infrastructure = std::floor(std::clamp(infrastructure, 1.0F, 5.0F));
+}
 
 void HoI4::State::setIndustry(int factories, const CoastalProvinces& theCoastalProvinces)
 {

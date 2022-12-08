@@ -1,12 +1,11 @@
-#include "OccupationLawsFactory.h"
-#include "CommonRegexes.h"
-#include "OccupationLawFactory.h"
-#include "ParserHelpers.h"
+#include "src/HOI4World/OccupationLaws/OccupationLawsFactory.h"
+#include "external/common_items/CommonRegexes.h"
+#include "external/common_items/ParserHelpers.h"
+#include "src/HOI4World/OccupationLaws/OccupationLawFactory.h"
 
 
 
-std::unique_ptr<HoI4::OccupationLaws> HoI4::OccupationLaws::Factory::getOccupationLaws(
-	 const Configuration& configuration)
+std::unique_ptr<HoI4::OccupationLaws> HoI4::OccupationLaws::Factory::getOccupationLaws()
 {
 	auto occupationLaws = std::make_unique<OccupationLaws>();
 	OccupationLaw::Factory lawFactory;
@@ -17,6 +16,6 @@ std::unique_ptr<HoI4::OccupationLaws> HoI4::OccupationLaws::Factory::getOccupati
 			 occupationLaws->giveOccupationLaw(std::move(*occupationLaw));
 		 });
 
-	parseFile(configuration.getHoI4Path() + "/common/occupation_laws/occupation_laws.txt");
+	parseFile("blankmod/common/occupation_laws/occupation_laws.txt");
 	return occupationLaws;
 }

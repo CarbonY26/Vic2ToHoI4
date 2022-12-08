@@ -1,6 +1,6 @@
-#include "Configuration.h"
-#include "gmock/gmock-matchers.h"
-#include "gtest/gtest.h"
+#include "external/googletest/googlemock/include/gmock/gmock-matchers.h"
+#include "external/googletest/googletest/include/gtest/gtest.h"
+#include "src/Configuration.h"
 #include <sstream>
 
 
@@ -373,7 +373,7 @@ TEST(ConfigurationTests, Vic2ModsCanBeSet)
 }
 
 
-TEST(ConfigurationTests, Vic2ModsWithDependenciesAreBeforeTheirDependencies)
+TEST(ConfigurationTests, Vic2ModsWithDependenciesAreAfterTheirDependencies)
 {
 	std::stringstream input;
 	input << R"(Vic2directory = "./Vic2")";
@@ -386,11 +386,11 @@ TEST(ConfigurationTests, Vic2ModsWithDependenciesAreBeforeTheirDependencies)
 	const commonItems::ConverterVersion converterVersion;
 	const auto theConfiguration = Configuration::Factory().importConfiguration(input, converterVersion);
 
-	ASSERT_THAT(theConfiguration->getVic2Mods(),
-		 testing::ElementsAre(Mod("Dependent Mod", "./Vic2/mod/test_directory/", std::set<Name>{"Dependency One"}),
-			  Mod("Dependency One", "./Vic2/mod/test_directory/", std::set<Name>{"Dependency Two"}),
+	EXPECT_THAT(theConfiguration->getVic2Mods(),
+		 testing::ElementsAre(Mod("Test Mod", "./Vic2/mod/test_directory/"),
 			  Mod("Dependency Two", "./Vic2/mod/test_directory/"),
-			  Mod("Test Mod", "./Vic2/mod/test_directory/")));
+			  Mod("Dependency One", "./Vic2/mod/test_directory/", std::set<Name>{"Dependency Two"}),
+			  Mod("Dependent Mod", "./Vic2/mod/test_directory/", std::set<Name>{"Dependency One"})));
 }
 
 

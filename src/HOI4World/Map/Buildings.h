@@ -3,13 +3,13 @@
 
 
 
-#include "BuildingPosition.h"
-#include "Configuration.h"
-#include "HOI4World/Map/CoastalProvinces.h"
-#include "HOI4World/States/HoI4States.h"
-#include "Hoi4Building.h"
-#include "Maps/MapData.h"
-#include "Maps/ProvinceDefinitions.h"
+#include "src/Configuration.h"
+#include "src/HOI4World/Map/BuildingPosition.h"
+#include "src/HOI4World/Map/CoastalProvinces.h"
+#include "src/HOI4World/Map/Hoi4Building.h"
+#include "src/HOI4World/States/HoI4States.h"
+#include "src/Maps/MapData.h"
+#include "src/Maps/ProvinceDefinitions.h"
 #include <map>
 #include <optional>
 #include <regex>
@@ -51,6 +51,14 @@ class Buildings
 		 const std::map<int, std::vector<int>>& actualCoastalProvinces,
 		 const Maps::MapData& theMapData,
 		 const Configuration& theConfiguration);
+	void placeFloatingHarbors(const std::map<int, int>& provinceToStateIDMap,
+		 const std::map<int, std::vector<int>>& actualCoastalProvinces,
+		 const Maps::MapData& theMapData,
+		 const Configuration& theConfiguration);
+	void addFloatingHarbors(int stateID,
+		 const std::pair<int, std::vector<int>>& province,
+		 const Maps::MapData& theMapData,
+		 const Configuration& theConfiguration);
 	void addNavalBase(int stateID,
 		 const std::pair<int, std::vector<int>>& province,
 		 const Maps::MapData& theMapData,
@@ -75,6 +83,15 @@ class Buildings
 	void placeSyntheticRefineries(const States& theStates, const Maps::MapData& theMapData);
 	void placeNuclearReactors(const States& theStates, const Maps::MapData& theMapData);
 
+	void placeSupplyNodes(const std::map<int, int>& provinceToStateIDMap,
+		 const Maps::MapData& theMapData,
+		 const Configuration& theConfiguration);
+
+	void addSupplyNodes(int stateID,
+		 int province,
+		 const Maps::MapData& theMapData,
+		 const Configuration& theConfiguration);
+
 	std::multimap<int, Building> buildings;
 
 	defaultPositions defaultArmsFactories;
@@ -87,6 +104,8 @@ class Buildings
 	defaultPositions defaultAntiAirs;
 	defaultPositions defaultSyntheticRefineries;
 	defaultPositions defaultNuclearReactors;
+	defaultPositions defaultSupplyNodes;
+	defaultPositions defaultFloatingHarbors;
 
 	std::map<int, int> airportLocations;
 };

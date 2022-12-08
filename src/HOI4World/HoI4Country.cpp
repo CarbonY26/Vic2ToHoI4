@@ -1,26 +1,26 @@
-#include "HoI4Country.h"
-#include "CommonFunctions.h"
-#include "Diplomacy/HoI4War.h"
-#include "HoI4Localisation.h"
-#include "HoI4World.h"
-#include "Log.h"
-#include "Mappers/Country/CountryMapper.h"
-#include "Mappers/Government/GovernmentMapper.h"
-#include "Mappers/Graphics/GraphicsMapper.h"
-#include "Mappers/Provinces/ProvinceMapper.h"
-#include "Mappers/Technology/TechMapper.h"
-#include "MilitaryMappings/MilitaryMappings.h"
-#include "Names/Names.h"
-#include "OSCompatibilityLayer.h"
-#include "V2World/Ai/AI.h"
-#include "V2World/Ai/AIStrategy.h"
-#include "V2World/Countries/Country.h"
-#include "V2World/Politics/Party.h"
-#include "V2World/World/World.h"
+#include "src/HOI4World/HoI4Country.h"
+#include "external/common_items/CommonFunctions.h"
+#include "external/common_items/Log.h"
+#include "external/common_items/OSCompatibilityLayer.h"
+#include "src/HOI4World/Diplomacy/HoI4War.h"
+#include "src/HOI4World/HoI4Localisation.h"
+#include "src/HOI4World/HoI4World.h"
+#include "src/HOI4World/MilitaryMappings/MilitaryMappings.h"
+#include "src/HOI4World/Names/Names.h"
+#include "src/Mappers/Country/CountryMapper.h"
+#include "src/Mappers/Government/GovernmentMapper.h"
+#include "src/Mappers/Graphics/GraphicsMapper.h"
+#include "src/Mappers/Provinces/ProvinceMapper.h"
+#include "src/Mappers/Technology/TechMapper.h"
+#include "src/V2World/Ai/AI.h"
+#include "src/V2World/Ai/AIStrategy.h"
+#include "src/V2World/Countries/Country.h"
+#include "src/V2World/Politics/Party.h"
+#include "src/V2World/World/World.h"
 #include <algorithm>
 #include <cmath>
 
-#include "Characters/CharacterFactory.h"
+#include "src/HOI4World/Characters/CharacterFactory.h"
 
 
 HoI4::Country::Country(std::string tag,
@@ -118,7 +118,7 @@ HoI4::Country::Country(std::string tag,
 	{
 		convertMonarch(*lastMonarch);
 	}
-	convertLeaders(sourceCountry, characterFactory, hoi4Localisations);
+	convertLeaders(sourceCountry, characterFactory, graphicsMapper, hoi4Localisations);
 	convertRelations(countryMap, sourceCountry, startDate);
 	atWar = sourceCountry.isAtWar();
 
@@ -511,18 +511,29 @@ void HoI4::Country::convertMonarch(const std::string& lastMonarch)
 
 void HoI4::Country::convertLeaders(const Vic2::Country& sourceCountry,
 	 Character::Factory& characterFactory,
+	 const Mappers::GraphicsMapper& graphics_mapper,
 	 Localisation& localisation)
 {
+	const auto army_portraits = graphics_mapper.getArmyPortraits(primaryCulture, primaryCultureGroup);
+	const auto navy_portraits = graphics_mapper.getNavyPortraits(primaryCulture, primaryCultureGroup);
 	for (const auto& srcLeader: sourceCountry.getLeaders())
 	{
 		if (srcLeader.getType() == "land")
 		{
-			Character newCommander = characterFactory.createNewGeneral(srcLeader, tag, localisation);
+			Character newCommander = characterFactory.createNewGeneral(srcLeader,
+				 tag,
+				 army_portraits[std::uniform_int_distribution<int>{0, static_cast<int>(army_portraits.size() - 1)}(
+					  generator)],
+				 localisation);
 			characters_.push_back(newCommander);
 		}
 		else if (srcLeader.getType() == "sea")
 		{
-			Character newAdmiral = characterFactory.createNewAdmiral(srcLeader, tag, localisation);
+			Character newAdmiral = characterFactory.createNewAdmiral(srcLeader,
+				 tag,
+				 navy_portraits[std::uniform_int_distribution<int>{0, static_cast<int>(navy_portraits.size() - 1)}(
+					  generator)],
+				 localisation);
 			characters_.push_back(newAdmiral);
 		}
 	}
@@ -603,6 +614,7 @@ void HoI4::Country::convertMonarchIdea(const Mappers::GraphicsMapper& graphicsMa
 		hoi4Localisations.addIdeaLocalisation(tag + "_monarch", "Król " + *firstName + " " + *surname, "polish");
 		hoi4Localisations.addIdeaLocalisation(tag + "_monarch", "Король " + *firstName + " " + *surname, "russian");
 		hoi4Localisations.addIdeaLocalisation(tag + "_monarch", "Rey " + *firstName + " " + *surname, "spanish");
+		hoi4Localisations.addIdeaLocalisation(tag + "_monarch", *firstName + " " + *surname + "王", "japanese");
 	}
 	else
 	{
@@ -613,6 +625,7 @@ void HoI4::Country::convertMonarchIdea(const Mappers::GraphicsMapper& graphicsMa
 		hoi4Localisations.addIdeaLocalisation(tag + "_monarch", "Królowa " + *firstName + " " + *surname, "polish");
 		hoi4Localisations.addIdeaLocalisation(tag + "_monarch", "Королева " + *firstName + " " + *surname, "russian");
 		hoi4Localisations.addIdeaLocalisation(tag + "_monarch", "Reina " + *firstName + " " + *surname, "spanish");
+		hoi4Localisations.addIdeaLocalisation(tag + "_monarch", *firstName + " " + *surname + "女王", "japanese");
 	}
 
 	if (!female)
@@ -645,6 +658,10 @@ void HoI4::Country::convertMonarchIdea(const Mappers::GraphicsMapper& graphicsMa
 			 "Reunida en torno al Rey de [" + tag + ".GetName] y las tierras [" + tag + ".GetAdjective]s, la nación [" +
 				  tag + ".GetAdjective] está unida y orgullosa de su legado imperial.",
 			 "spanish");
+		hoi4Localisations.addIdeaLocalisation(tag + "_monarch_desc",
+			 "[" + tag + ".GetName]の国王と[" + tag + ".GetAdjective]の領土の周りに結集し、[" + tag +
+				  ".GetAdjective]人は団結し、帝国の遺産を誇りに思っています",
+			 "japanese");
 	}
 	else
 	{
@@ -676,6 +693,10 @@ void HoI4::Country::convertMonarchIdea(const Mappers::GraphicsMapper& graphicsMa
 			 "Reunida en torno a la Reina de [" + tag + ".GetName] y las tierras [" + tag +
 				  ".GetAdjective]s, la nación [" + tag + ".GetAdjective] está unida y orgullosa de su legado imperial.",
 			 "spanish");
+		hoi4Localisations.addIdeaLocalisation(tag + "_monarch_desc",
+			 "[" + tag + ".GetName]の女王と[" + tag + ".GetAdjective]の領土の周りに結集し、[" + tag +
+				  ".GetAdjective]人は団結し、帝国の遺産を誇りに思っています",
+			 "japanese");
 	}
 
 	if (!female)
@@ -754,6 +775,7 @@ void HoI4::Country::convertStrategies(const Mappers::CountryMapper& countryMap,
 
 
 void HoI4::Country::convertWars(const Vic2::Country& theSourceCountry,
+	 const std::set<std::string>& independentCountries,
 	 const Mappers::CountryMapper& countryMap,
 	 const Mappers::CasusBellis& casusBellis,
 	 const Mappers::ProvinceMapper& provinceMapper,
@@ -761,7 +783,7 @@ void HoI4::Country::convertWars(const Vic2::Country& theSourceCountry,
 {
 	for (const auto& sourceWar: theSourceCountry.getWars())
 	{
-		War theWar(sourceWar, countryMap, casusBellis, provinceMapper, provinceToStateIDMap);
+		War theWar(sourceWar, independentCountries, countryMap, casusBellis, provinceMapper, provinceToStateIDMap);
 		wars.push_back(theWar);
 	}
 }
@@ -1311,8 +1333,7 @@ void HoI4::Country::convertConvoys(const UnitMappings& unitMap)
 
 void HoI4::Country::convertAirForce(const UnitMappings& unitMap)
 {
-	static std::map<std::string, std::vector<std::string>> backups = {
-		 {"fighter_equipment_0", {"tac_bomber_equipment_0"}}};
+	int amount = 0;
 	for (const auto& army: oldArmies)
 	{
 		for (const auto& regiment: army.getUnits())
@@ -1323,19 +1344,7 @@ void HoI4::Country::convertAirForce(const UnitMappings& unitMap)
 				{
 					if (unitInfo.getCategory() == "air")
 					{
-						// Air units get placed in national stockpile.
-						auto equip = unitInfo.getEquipment();
-						auto amount = unitInfo.getSize();
-						const auto& backup = backups.find(equip);
-						if (backup != backups.end())
-						{
-							amount /= (1 + static_cast<int>(backup->second.size()));
-							for (const auto& b: backup->second)
-							{
-								equipmentStockpile[b] += amount;
-							}
-						}
-						equipmentStockpile[equip] += amount;
+						amount += unitInfo.getSize();
 						break;
 					}
 				}
@@ -1346,6 +1355,44 @@ void HoI4::Country::convertAirForce(const UnitMappings& unitMap)
 			}
 		}
 	}
+	amount /= 2;
+
+	if (theTechnologies->hasTechnology("basic_small_airframe"))
+	{
+		equipment_stockpile_.emplace_back(tag,
+			 "small_plane_airframe_1",
+			 "Basic Fighter",
+			 R"(has_dlc = "By Blood Alone")",
+			 amount);
+		equipment_stockpile_.emplace_back(tag,
+			 "small_plane_cas_airframe_1",
+			 "Basic CAS",
+			 R"(has_dlc = "By Blood Alone")",
+			 amount);
+	}
+	else
+	{
+		equipment_stockpile_.emplace_back(tag,
+			 "small_plane_airframe_0",
+			 "Interwar Fighter",
+			 R"(has_dlc = "By Blood Alone")",
+			 amount);
+		equipment_stockpile_.emplace_back(tag,
+			 "small_plane_cas_airframe_0",
+			 "Interwar CAS",
+			 R"(has_dlc = "By Blood Alone")",
+			 amount);
+	}
+	equipment_stockpile_.emplace_back(tag,
+		 "fighter_equipment_0",
+		 std::nullopt,
+		 R"(NOT = { has_dlc = "By Blood Alone" })",
+		 amount);
+	equipment_stockpile_.emplace_back(tag,
+		 "tac_bomber_equipment_0",
+		 std::nullopt,
+		 R"(NOT = { has_dlc = "By Blood Alone" })",
+		 amount);
 }
 
 
@@ -1356,26 +1403,28 @@ void HoI4::Country::convertArmies(const militaryMappings& theMilitaryMappings,
 {
 	if (capitalProvince)
 	{
-		theArmy.convertArmies(theMilitaryMappings,
+		theArmy.ConvertArmies(theMilitaryMappings,
 			 *capitalProvince,
 			 theConfiguration.getForceMultiplier(),
 			 *theTechnologies,
 			 theStates,
-			 provinceMapper);
+			 provinceMapper,
+			 tag);
 	}
 	else
 	{
-		theArmy.convertArmies(theMilitaryMappings,
+		theArmy.ConvertArmies(theMilitaryMappings,
 			 0,
 			 theConfiguration.getForceMultiplier(),
 			 *theTechnologies,
 			 theStates,
-			 provinceMapper);
+			 provinceMapper,
+			 tag);
 	}
 
-	for (const auto& [equipmentType, amount]: theArmy.getLeftoverEquipment())
+	for (const auto& equipment: theArmy.GetLeftoverEquipment())
 	{
-		equipmentStockpile[equipmentType] += amount;
+		equipment_stockpile_.push_back(equipment);
 	}
 
 	convertStockpile();
@@ -1426,9 +1475,29 @@ void HoI4::Country::convertStockpile()
 	const auto armorSupply = *std::min_element(armorSupplyLevels.begin(), armorSupplyLevels.end());
 	if (const auto tanks = divisionTypesAndAmounts.find("light_armor"); tanks != divisionTypesAndAmounts.end())
 	{
-		equipmentStockpile["gw_tank_equipment"] +=
-			 static_cast<int>(std::ceil(static_cast<float>(tanks->second) * armorSupply / full_light_armor_supply *
-												 light_armor_equipment_per_division));
+		const auto amount = static_cast<int>(std::ceil(static_cast<float>(tanks->second) * armorSupply /
+																	  full_light_armor_supply * light_armor_equipment_per_division));
+		equipment_stockpile_.emplace_back(tag,
+			 "gw_tank_equipment",
+			 std::nullopt,
+			 R"(NOT = { has_dlc = "No Step Back" })",
+			 amount);
+		if (theTechnologies->hasTechnology("basic_light_tank_chassis"))
+		{
+			equipment_stockpile_.emplace_back(tag,
+				 "light_tank_chassis_1",
+				 "Basic Light Tank",
+				 R"(has_dlc = "No Step Back")",
+				 amount);
+		}
+		else
+		{
+			equipment_stockpile_.emplace_back(tag,
+				 "light_tank_chassis_0",
+				 "GW Light Tank",
+				 R"(has_dlc = "No Step Back")",
+				 amount);
+		}
 	}
 	sourceCountryGoods["barrels"] -= barrels_supply_required_for_light_armor * armorSupply;
 	sourceCountryGoods["artillery"] -= artillery_supply_required_for_light_armor * armorSupply;
@@ -1442,21 +1511,25 @@ void HoI4::Country::convertStockpile()
 	if (const auto artillery = divisionTypesAndAmounts.find("artillery_brigade");
 		 artillery != divisionTypesAndAmounts.end())
 	{
-		equipmentStockpile["artillery_equipment_1"] +=
+		equipment_stockpile_.emplace_back(tag,
+			 "artillery_equipment_1",
+			 std::nullopt,
+			 std::nullopt,
 			 static_cast<int>(std::ceil(static_cast<float>(artillery->second) * artillerySupply / full_artillery_supply *
-												 artillery_equipment_per_division));
+												 artillery_equipment_per_division)));
 	}
 	sourceCountryGoods["artillery"] -= artillery_supply_required_for_artillery * artillerySupply;
 	sourceCountryGoods["canned_food"] -= canned_food_supply_required_for_artillery * artillerySupply;
 
 	// convert supply into infantry equipment via infantry
+	int infantry_equipment_amount = 0;
 	std::set infantrySupplyLevels{getSourceCountryGoodAmount("small_arms") / small_arms_supply_required_for_infantry,
 		 getSourceCountryGoodAmount("ammunition") / ammunition_supply_required_for_infantry,
 		 getSourceCountryGoodAmount("canned_food") / canned_food_supply_required_for_infantry};
 	const auto infantrySupply = *std::min_element(infantrySupplyLevels.begin(), infantrySupplyLevels.end());
 	if (const auto tanks = divisionTypesAndAmounts.find("infantry"); tanks != divisionTypesAndAmounts.end())
 	{
-		equipmentStockpile["infantry_equipment_0"] += static_cast<int>(std::ceil(
+		infantry_equipment_amount += static_cast<int>(std::ceil(
 			 static_cast<float>(tanks->second) * infantrySupply / full_infantry_supply * infantry_equipment_per_division));
 	}
 	sourceCountryGoods["small_arms"] -= small_arms_supply_required_for_infantry * infantrySupply;
@@ -1470,22 +1543,41 @@ void HoI4::Country::convertStockpile()
 	const auto cavalrySupply = *std::min_element(cavalrySupplyLevels.begin(), cavalrySupplyLevels.end());
 	if (const auto tanks = divisionTypesAndAmounts.find("cavalry"); tanks != divisionTypesAndAmounts.end())
 	{
-		equipmentStockpile["infantry_equipment_0"] += static_cast<int>(std::ceil(
+		infantry_equipment_amount += static_cast<int>(std::ceil(
 			 static_cast<float>(tanks->second) * cavalrySupply / full_cavalry_supply * cavalry_equipment_per_division));
 	}
 	sourceCountryGoods["small_arms"] -= small_arms_supply_required_for_cavalry * cavalrySupply;
 	sourceCountryGoods["ammunition"] -= ammunition_supply_required_for_cavalry * cavalrySupply;
 	sourceCountryGoods["canned_food"] -= canned_food_supply_required_for_cavalry * cavalrySupply;
+	if (infantry_equipment_amount > 0)
+	{
+		equipment_stockpile_.emplace_back(tag,
+			 "infantry_equipment_0",
+			 std::nullopt,
+			 std::nullopt,
+			 infantry_equipment_amount);
+	}
 }
 
 
 void HoI4::Country::addState(const State& state)
 {
 	states.insert(state.getID());
-
+	nationalPopulation += state.getPopulation();
 	for (const auto province: state.getProvinces())
 	{
 		provinces.insert(province);
+	}
+}
+
+
+void HoI4::Country::removeState(const State& state)
+{
+	states.erase(state.getID());
+
+	for (const auto province: state.getProvinces())
+	{
+		provinces.erase(province);
 	}
 }
 
@@ -1564,15 +1656,18 @@ void HoI4::Country::transferPuppets(const std::set<std::shared_ptr<Country>>& tr
 }
 
 
-void HoI4::Country::addPuppetsIntegrationTree(HoI4::Localisation& hoi4Localisations)
+void HoI4::Country::addPuppetsIntegrationTree(HoI4::Localisation& hoi4Localisations, bool debug)
 {
-	nationalFocus->addIntegratePuppetsBranch(tag, puppets, hoi4Localisations);
+	nationalFocus->addIntegratePuppetsBranch(tag, puppets, hoi4Localisations, debug);
 }
 
 
 void HoI4::Country::addFocusTreeBranch(const std::string& branch, OnActions& onActions)
 {
-	nationalFocus->addBranch(tag, branch, onActions);
+	if (nationalFocus)
+	{
+		nationalFocus->addBranch(tag, branch, onActions);
+	}
 }
 
 
@@ -1670,6 +1765,44 @@ bool HoI4::Country::hasMonarchIdea() const
 }
 
 
+float HoI4::Country::GetResourcesMultiplier() const
+{
+	if (!civilized)
+	{
+		return 0.0F;
+	}
+	if (unrecognizedNation)
+	{
+		return 0.0F;
+	}
+
+	float top_industry_technologies = 0.0F;
+	if (oldTechnologiesAndInventions.contains("electrical_power_generation"))
+	{
+		++top_industry_technologies;
+	}
+	if (oldTechnologiesAndInventions.contains("shift_work"))
+	{
+		++top_industry_technologies;
+	}
+	if (oldTechnologiesAndInventions.contains("electric_furnace"))
+	{
+		++top_industry_technologies;
+	}
+	if (oldTechnologiesAndInventions.contains("limited_access_roads"))
+	{
+		++top_industry_technologies;
+	}
+	if (oldTechnologiesAndInventions.contains("synthetic_polymers"))
+	{
+		++top_industry_technologies;
+	}
+
+	const float a = 0.025F * top_industry_technologies * top_industry_technologies;
+	const float b = 0.075F * top_industry_technologies;
+	return a + b;
+}
+
 
 const bool HoI4::Country::isEligibleEnemy(std::string target) const
 {
@@ -1698,30 +1831,84 @@ std::optional<std::string> HoI4::Country::getDominionTag(const std::string& regi
 }
 
 
-void HoI4::Country::addProvincesToHomeArea(int provinceId,
-	 const std::unique_ptr<Maps::MapData>& theMapData,
-	 const std::map<int, HoI4::State>& states,
+std::vector<std::set<int>> HoI4::Country::getDominionAreas(const std::unique_ptr<Maps::MapData>& theMapData,
+	 const std::map<int, HoI4::State>& allStates,
 	 const std::map<int, int>& provinceToStateIdMap)
 {
-	if (homeAreaProvinces.contains(provinceId))
+	std::vector<std::set<int>> dominionAreas;
+	std::set<int> area;
+
+	// Provinces with land connection to capital take the 0 index in dominionAreas vector
+	addProvincesToArea(*capitalProvince, area, theMapData, allStates, provinceToStateIdMap);
+	dominionAreas.push_back(area);
+
+	// Then cycle through the rest and make province clusters for potential transfer to dominions
+	for (const auto& stateId: states)
+	{
+		const auto& state = allStates.find(stateId);
+		if (state == allStates.end())
+		{
+			continue;
+		}
+		area.clear();
+
+		// Check every province in state to ensure that island provinces are added properly
+		for (const auto& province: state->second.getProvinces())
+		{
+			if (isProvinceInDominionArea(province, dominionAreas))
+			{
+				continue;
+			}
+			addProvincesToArea(province, area, theMapData, allStates, provinceToStateIdMap);
+		}
+		dominionAreas.push_back(area);
+	}
+	return dominionAreas;
+}
+
+
+void HoI4::Country::addProvincesToArea(int province,
+	 std::set<int>& area,
+	 const std::unique_ptr<Maps::MapData>& theMapData,
+	 const std::map<int, HoI4::State>& allStates,
+	 const std::map<int, int>& provinceToStateIdMap)
+{
+	// If the province is in area, then it and all its neighbors have been processed and added to area
+	if (area.contains(province))
 	{
 		return;
 	}
-	auto provinceToStateIdMapping = provinceToStateIdMap.find(provinceId);
+	auto provinceToStateIdMapping = provinceToStateIdMap.find(province);
 	if (provinceToStateIdMapping == provinceToStateIdMap.end())
 	{
 		return;
 	}
 	const auto& stateId = provinceToStateIdMapping->second;
-	if (const auto& state = states.find(stateId); state->second.getOwner() != tag)
+	// Provinces owned by other countries break the contiguousness
+	if (const auto& state = allStates.find(stateId); state->second.getOwner() != tag)
 	{
 		return;
 	}
-	homeAreaProvinces.insert(provinceId);
-	for (const auto& neighbor: theMapData->getNeighbors(provinceId))
+	area.insert(province);
+
+	for (const auto& neighbor: theMapData->GetNeighbors(province))
 	{
-		addProvincesToHomeArea(neighbor, theMapData, states, provinceToStateIdMap);
+		addProvincesToArea(neighbor, area, theMapData, allStates, provinceToStateIdMap);
 	}
+}
+
+
+bool HoI4::Country::isProvinceInDominionArea(int province, const std::vector<std::set<int>>& dominionAreas)
+{
+	return std::ranges::any_of(dominionAreas, [province](const std::set<int>& area) {
+		return area.contains(province);
+	});
+}
+
+
+void HoI4::Country::AddPlaneDesigns(const PossiblePlaneDesigns& possible_designs)
+{
+	plane_designs_ = std::make_unique<PlaneDesigns>(possible_designs, *theTechnologies);
 }
 
 

@@ -3,8 +3,8 @@
 
 
 
-#include "HOI4World/HoI4Localisation.h"
-#include "Parser.h"
+#include "external/common_items/ConvenientParser.h"
+#include "src/HOI4World/HoI4Localisation.h"
 #include <string>
 #include <vector>
 
@@ -22,7 +22,8 @@ class HoI4Focus: commonItems::parser
 	std::shared_ptr<HoI4Focus> makeCustomizedCopy(const std::string& country) const;
 	std::shared_ptr<HoI4Focus> makeTargetedCopy(const std::string& country,
 		 const std::string& target,
-		 HoI4::Localisation& localisation) const;
+		 HoI4::Localisation& localisation,
+		 bool debug) const;
 
 	void updateFocusElement(std::string& element,
 		 std::string_view oldText,

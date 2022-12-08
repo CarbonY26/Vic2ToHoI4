@@ -3,19 +3,19 @@
 
 
 
-#include "DefaultState.h"
-#include "HOI4World/Map/Hoi4Province.h"
-#include "HOI4World/Map/StrategicRegions.h"
-#include "HOI4World/Names/Names.h"
-#include "HOI4World/Regions/Regions.h"
-#include "Mappers/Country/CountryMapper.h"
-#include "Mappers/Country/CountryMapperFactory.h"
-#include "Mappers/Graphics/GraphicsMapper.h"
-#include "Mappers/Provinces/ProvinceMapper.h"
-#include "Maps/MapData.h"
-#include "Parser.h"
-#include "V2World/Countries/Country.h"
-#include "V2World/States/State.h"
+#include "external/common_items/ConvenientParser.h"
+#include "src/HOI4World/Map/Hoi4Province.h"
+#include "src/HOI4World/Map/StrategicRegions.h"
+#include "src/HOI4World/Names/Names.h"
+#include "src/HOI4World/Regions/Regions.h"
+#include "src/HOI4World/States/DefaultState.h"
+#include "src/Mappers/Country/CountryMapper.h"
+#include "src/Mappers/Country/CountryMapperFactory.h"
+#include "src/Mappers/Graphics/GraphicsMapper.h"
+#include "src/Mappers/Provinces/ProvinceMapper.h"
+#include "src/Maps/MapData.h"
+#include "src/V2World/Countries/Country.h"
+#include "src/V2World/States/State.h"
 #include <map>
 #include <optional>
 #include <set>
@@ -77,10 +77,11 @@ class States: commonItems::parser
 
 	void convertAirBases(const std::map<std::string, std::shared_ptr<Country>>& countries,
 		 const std::vector<std::shared_ptr<Country>>& greatPowers);
-	void convertResources();
+	void convertResources(const std::map<std::string, std::shared_ptr<HoI4::Country>>& countries);
 	void putIndustryInStates(const std::map<std::string, double>& factoryWorkerRatios,
 		 const CoastalProvinces& theCoastalProvinces,
 		 const Configuration& theConfiguration);
+	void finishInfrastructureConversion();
 	void convertCapitalVPs(const std::map<std::string, std::shared_ptr<Country>>& countries,
 		 const std::vector<std::shared_ptr<Country>>& greatPowers);
 	void addCapitalsToStates(const std::map<std::string, std::shared_ptr<Country>>& countries);

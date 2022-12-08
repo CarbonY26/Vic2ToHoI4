@@ -1,7 +1,7 @@
-#include "DefaultState.h"
-#include "CommonRegexes.h"
-#include "ParserHelpers.h"
-#include "StateHistory.h"
+#include "src/HOI4World/States/DefaultState.h"
+#include "external/common_items/CommonRegexes.h"
+#include "external/common_items/ParserHelpers.h"
+#include "src/HOI4World/States/StateHistory.h"
 
 
 
@@ -24,6 +24,12 @@ HoI4::DefaultState::DefaultState(std::istream& theStream)
 		milFactories = theHistory.getMilFactories();
 		dockyards = theHistory.getDockyards();
 		ownerTag = theHistory.getOwner();
+	});
+	registerKeyword("resources", [this](std::istream& the_stream) {
+		for (const auto& [resource, amount]: commonItems::assignments(the_stream).getAssignments())
+		{
+			resources_[resource] += std::stod(amount);
+		}
 	});
 	registerRegex(commonItems::catchallRegex, commonItems::ignoreItem);
 

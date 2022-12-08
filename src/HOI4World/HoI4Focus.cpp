@@ -1,7 +1,7 @@
-#include "HoI4Focus.h"
-#include "CommonRegexes.h"
-#include "HoI4Localisation.h"
-#include "ParserHelpers.h"
+#include "src/HOI4World/HoI4Focus.h"
+#include "external/common_items/CommonRegexes.h"
+#include "external/common_items/ParserHelpers.h"
+#include "src/HOI4World/HoI4Localisation.h"
 #include <regex>
 
 
@@ -118,12 +118,13 @@ std::shared_ptr<HoI4Focus> HoI4Focus::makeCustomizedCopy(const std::string& coun
 
 std::shared_ptr<HoI4Focus> HoI4Focus::makeTargetedCopy(const std::string& country,
 	 const std::string& target,
-	 HoI4::Localisation& localisation) const
+	 HoI4::Localisation& localisation,
+	 bool debug) const
 {
 	auto newFocus = std::make_shared<HoI4Focus>(*this);
 
 	newFocus->text = id + target;
-	localisation.copyFocusLocalisations(newFocus->id, newFocus->text);
+	localisation.copyFocusLocalisations(newFocus->id, newFocus->text, debug);
 	localisation.updateLocalisationText(newFocus->text, "$TARGET", target);
 	localisation.updateLocalisationText(newFocus->text + "_desc", "$TARGET", target);
 	newFocus->id += country + target;
